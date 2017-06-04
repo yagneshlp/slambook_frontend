@@ -1,0 +1,480 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    tools:context="com.yagneshlp.slambook.fragment.Part22"
+    >
+
+    <android.support.v7.widget.CardView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="30dp"
+        app:cardTitle="Test Title"
+        app:cardDescription="Test Description"
+        android:elevation="8dp"
+        android:layout_marginTop="20dp">
+
+        <me.grantland.widget.AutofitTextView
+            android:text="Here are some Yes or no Questions I'd Like you to Answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:maxLines="2"
+            android:padding="10dp"
+            android:textAlignment="center"
+            />
+
+        <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_marginTop="70dp"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="5dp">
+
+               <TableLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   xmlns:autofit="http://schemas.android.com/apk/res-auto">
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Do you like football?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:maxLines="1"
+                           android:textAlignment="center"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+                           android:layout_marginLeft="5sp"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q1"
+                          />
+                   </TableRow>
+
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Have you ever broken a bone?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                            />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q2"
+                           />
+                   </TableRow>
+
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Do you believe in God?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                            />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+               <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q3"
+                           />
+                   </TableRow>
+
+
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Do you play video games?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textAlignment="center"
+                           android:textSize="20sp"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+               <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q4"
+                           />
+                   </TableRow>
+
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Do you have a fear of heights?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                            />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+               <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q5"
+                          />
+                   </TableRow>
+
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Do you like shopping?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q6"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Are you a fan of Justin Beiber? :P"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q7"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text=" Do you like dogs?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q8"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Are you an Introvert or an extrovert?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q9"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text=" Do you believe in ghosts?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q10"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Do you keep a journal/diary?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q11"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="Hustled? ie, Faked it, until you made it?  "
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                   <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginLeft="5sp"
+                       android:layout_gravity="center"
+                       custom:textToggleLeft="Yes"
+                       custom:textToggleRight="No"
+                       android:id="@+id/q12"
+                       />
+                   </TableRow>
+
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+
+                   <TableRow>
+                       <me.grantland.widget.AutofitTextView
+                           android:text="You think you are healthy?"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textSize="20sp"
+                           android:textAlignment="center"
+                           android:maxLines="2"
+                           />
+                   </TableRow>
+                   <TableRow>
+                       <TextView />
+                   </TableRow>
+                   <TableRow>
+                       <belka.us.androidtoggleswitch.widgets.ToggleSwitch
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="5sp"
+                           android:layout_gravity="center"
+                           custom:textToggleLeft="Yes"
+                           custom:textToggleRight="No"
+                           android:id="@+id/q13"
+                           />
+                   </TableRow>
+
+
+               </TableLayout>
+
+
+
+                <com.dd.processbutton.iml.ActionProcessButton
+                    android:id="@+id/btn_signup"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginTop="40dp"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="10dp"
+                    android:paddingBottom="0dp"
+                    android:elevation="5dp"
+                    custom:pb_colorNormal="@color/colorPrimary"
+                    custom:pb_colorPressed="@color/colorPrimaryDark"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </android.support.v7.widget.CardView>
+
+
+
+
+</FrameLayout>
