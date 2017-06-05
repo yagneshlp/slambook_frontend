@@ -185,7 +185,7 @@ public class Part11 extends Fragment {
                 String uid=db.getUserID();  //getting the current userid from local db
                 String uname=cur.getUsername(); //getting current user name from sessionmnager
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("route", "1");               //   json POST paran add
+                params.put("route", "11");               //   json POST paran add
                 params.put("userid",uid);               //   "
                 params.put("username", uname);          //    "
                 params.put("need", "get");             //    "
