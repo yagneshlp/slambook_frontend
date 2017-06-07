@@ -9,12 +9,14 @@ import com.yagneshlp.slambook.fragment.DatePickerFragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.app.DialogFragment;
@@ -68,20 +70,18 @@ public class Part22 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName();
     ActionProcessButton button;
     String ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13;
-
-
-
+    ToggleSwitch t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_part22,
                 container, false);
 
-        ToggleSwitch t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13;
+
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
         button.setMode(ActionProcessButton.Mode.ENDLESS);
+
         ans1=ans2=ans3=ans4=ans5=ans6=ans7=ans8=ans9=ans10=ans11=ans12=ans13="Yes";
-        //
         t1 = (ToggleSwitch) view.findViewById(R.id.q1);
         t2= (ToggleSwitch) view.findViewById(R.id.q2);
         t3 = (ToggleSwitch) view.findViewById(R.id.q3);
@@ -280,12 +280,12 @@ public class Part22 extends Fragment {
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        insert_into(ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13);
+                        checker();
 
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
-                        insert_into(ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13);
+                        checker();
                     }
                 } else {
                     Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -307,10 +307,94 @@ public class Part22 extends Fragment {
         return view;
     }
 
+    private void checker()
+    {
+        String tag_string_req = "req_page22_val";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_INSERT, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Page 22 get Response: " + response.toString());
+
+                try {
+                    final JSONObject jObj = new JSONObject(response); //objectifying the json
+                    boolean error = jObj.getBoolean("error");  //detecting if an error was sent in json
+                    // Check for error node in json
+                    if (!error) {
+                        //Got status Successfully
+                        String status=jObj.getString("value");
+                        if(status.equals("Yes"))
+                        {
+
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Update the Data?")
+                                    .setMessage("This page has already been filled.\nDo you want to update it with current data or retain previous data?")
+                                    .setPositiveButton("Retain old info", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            button.setProgress(100); //the button is set to green colour(subitted)
+                                            SlambookActivity.viewPager.setCurrentItem(SlambookActivity.viewPager.getCurrentItem()+1,true); //the veiwpager is changed to next page
+                                            Log.d(TAG,"User decided to retain old value" ); //logging the error message
+                                        }
+                                    })
+                                    .setNegativeButton("Update with new data", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            insert_into(ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13);
+                                        }
+                                    })
+                                    .show();
+                        }
+                        else
+                            insert_into(ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13);
+
+                    } else {
+                        // Error in Submission
+                        button.setProgress(-1); //button is set at error colour - red
+                        String errorMsg = jObj.getString("message"); //extracting the error
+                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
+                        Toast.makeText(getContext(),"An Error occured and logged, try Again", Toast.LENGTH_LONG).show(); //displaying an error to the user
+                    }
+                } catch (JSONException e) {
+                    // JSON data was not returned, because an error at php script/mysql
+                    button.setProgress(-1);
+                    e.printStackTrace(); //logging error
+                    Toast.makeText(getContext(), "Internal error occured, try again later", Toast.LENGTH_LONG).show(); //displaying an error to the user
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                button.setProgress(-1);
+                Log.e(TAG, "Volley Error: " + error.getMessage()); //error in android part logged
+                Toast.makeText(getContext(),"Local error, try again", Toast.LENGTH_LONG).show(); //displaying the error to user
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                SQLiteHandler db= new SQLiteHandler(getContext());  //object of the sqlLite helper
+                SessionManager cur = new SessionManager(getContext());  //object of the session manager
+                String uid=db.getUserID();  //getting the current userid from local db
+                String uname=cur.getUsername(); //getting current user name from sessionmnager
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("route", "22");               //   json POST paran add
+                params.put("userid",uid);               //   "
+                params.put("username", uname);          //    "
+                params.put("need", "get");             //    "
+                return params;  //returning ready json
+            }
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
 
     private void insert_into(final String ans1,final String ans2,final String ans3,final String ans4,final String ans5,final String ans6,final String ans7,final String ans8,final String ans9,final String ans10,final String ans11,final String ans12,final String ans13) {
         // Tag used to cancel the request
-        String tag_string_req = "req_login";
+        String tag_string_req = "req_Page22_sub";
 
         //pDialog.setMessage("Submitting");
         //showDialog();
@@ -320,7 +404,7 @@ public class Part22 extends Fragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
+                Log.d(TAG, "Page 22 Submit Response: " + response.toString());
                 //hideDialog();
 
                 try {
@@ -329,23 +413,27 @@ public class Part22 extends Fragment {
 
                     // Check for error node in json
                     if (!error) {
-                        SlambookActivity.viewPager.setCurrentItem(SlambookActivity.viewPager.getCurrentItem()+1,true);
-                        String errorMsg = jObj.getString("message");
-                        Toast.makeText(getContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                        button.setProgress(100);
+                        //Submitted Successfully
+                        button.setProgress(100); //the button is set to green colour(subitted)
+                        SlambookActivity.viewPager.setCurrentItem(SlambookActivity.viewPager.getCurrentItem()+1,true); //the veiwpager is changed to next page
+                        String errorMsg = jObj.getString("message"); //extracting the message
+                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
+                        SessionManager cur = new SessionManager(getContext()); //setting the percentage in local preferences
+                        int progress = jObj.getInt("progress");                //     "
+                        cur.setPercentage(progress);                           //      "
 
                     } else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("message");
-                        Toast.makeText(getContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                        button.setProgress(-1);
+                        // Error in Submission
+                        button.setProgress(-1); //button is set at error colour - red
+                        String errorMsg = jObj.getString("message"); //extracting the error
+                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
+                        Toast.makeText(getContext(),"An Error occured and logged, try Again", Toast.LENGTH_LONG).show(); //displaying an error to the user
                     }
                 } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    // JSON data was not returned, because an error at php script/mysql
+                    button.setProgress(-1);
+                    e.printStackTrace(); //logging error
+                    Toast.makeText(getContext(), "Internal error occured, try again later", Toast.LENGTH_LONG).show(); //displaying an error to the user
                 }
 
             }
@@ -353,10 +441,9 @@ public class Part22 extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
-                Toast.makeText(getContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                //hideDialog();
+                button.setProgress(-1);
+                Log.e(TAG, "Volley Error: " + error.getMessage()); //error in android part logged
+                Toast.makeText(getContext(),"Local error, try again", Toast.LENGTH_LONG).show(); //displaying the error to user
             }
         }) {
 
@@ -384,7 +471,6 @@ public class Part22 extends Fragment {
                 params.put("q11", ans11);
                 params.put("q12", ans12);
                 params.put("q13", ans13);
-
                 return params;
             }
 

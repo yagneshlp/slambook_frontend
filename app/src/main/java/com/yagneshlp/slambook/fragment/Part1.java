@@ -52,8 +52,8 @@ public class Part1 extends Fragment {
     String buff = "";    //contains the formated date for the MySQL table at server
     SwitchDateTimeDialogFragment dateTimeFragment;   //for Datepicker
     ActionProcessButton button;    //submit buttom
-     EditText Et1, Et2;
-   TextView tv;
+    EditText Et1, Et2;
+    TextView tv;
 
     private static final String TAG_DATETIME_FRAGMENT = "TAG_DATETIME_FRAGMENT";
 
