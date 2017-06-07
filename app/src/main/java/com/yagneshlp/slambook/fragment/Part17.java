@@ -68,12 +68,12 @@ public class Part17 extends Fragment {
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        insert_into(Et1.getText().toString() );
+                        checker();
 
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
-                        insert_into(Et1.getText().toString() );
+                        checker();
 
                     }
                 } else {
