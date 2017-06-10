@@ -212,9 +212,9 @@ public class Part7 extends Fragment {
                     }
                 } catch (JSONException e) {
                     // JSON data was not returned, because an error at php script/mysql
-                    button.setProgress(-1);
+                    //button.setProgress(-1);
                     e.printStackTrace(); //logging error
-                    Toast.makeText(getContext(), "Internal error occured, try again later", Toast.LENGTH_LONG).show(); //displaying an error to the user
+                    //Toast.makeText(getContext(), "Internal error occured, try again later", Toast.LENGTH_LONG).show(); //displaying an error to the user
                 }
 
             }
