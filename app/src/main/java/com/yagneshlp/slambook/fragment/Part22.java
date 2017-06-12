@@ -1,13 +1,8 @@
 package com.yagneshlp.slambook.fragment;
 
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-
 import com.dd.processbutton.iml.ActionProcessButton;
-import com.yagneshlp.slambook.fragment.DatePickerFragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,23 +10,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
-import android.view.MotionEvent;
 import android.view.View;
-import android.app.DialogFragment;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -39,7 +25,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.yagneshlp.slambook.R;
-import com.yagneshlp.slambook.activity.RegisterActivity;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
 import com.yagneshlp.slambook.app.AppController;
@@ -48,14 +33,12 @@ import com.yagneshlp.slambook.helper.SessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import belka.us.androidtoggleswitch.widgets.BaseToggleSwitch;
 import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
-import belka.us.androidtoggleswitch.widgets.util.ToggleSwitchButton;
 
 /**
  * A simple {@link Fragment} subclass.

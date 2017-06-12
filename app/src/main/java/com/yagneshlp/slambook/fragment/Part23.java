@@ -18,13 +18,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.plattysoft.leonids.ParticleSystem;
 import com.yagneshlp.slambook.R;
+import com.yagneshlp.slambook.activity.MainActivity;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
 import com.yagneshlp.slambook.app.AppController;
@@ -289,6 +290,64 @@ public class Part23 extends Fragment {
                         SessionManager cur = new SessionManager(getContext()); //setting the percentage in local preferences
                         int progress = jObj.getInt("progress");                //     "
                         cur.setPercentage(progress);                           //      "
+
+                        if(cur.getPercentage()==100)
+                        {
+                            new ParticleSystem(getActivity(),80,R.drawable.star, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, 160, 200)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(0.00017f, 135)
+                                    .emit(getView().findViewById(R.id.emiter_top_right), 20,5000);
+                            new ParticleSystem(getActivity(), 80, R.drawable.circle, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, -20, 20)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(0.00017f, 45)
+                                    .emit(getView().findViewById(R.id.emiter_top_left), 20,5100);
+                            new ParticleSystem(getActivity(),80,R.drawable.rect, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, 160, 200)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(-0.00017f, 45)
+                                    .emit(getView().findViewById(R.id.emiter_bot_right), 20,5200);
+                            new ParticleSystem(getActivity(), 80, R.drawable.diamond, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, -20, 20)
+                                    .setRotationSpeed(360)
+                                   .setAcceleration(-0.00017f, 135)
+                                    .emit(getView().findViewById(R.id.emiter_bot_left), 20,5300);
+                            new ParticleSystem(getActivity(), 80, R.drawable.pointy, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, -20, 20)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(0.00017f, 90)
+                                    .emit(getView().findViewById(R.id.emiter_top_center), 20,5400);
+                            new ParticleSystem(getActivity(), 80, R.drawable.explosion, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, 160, 200)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(-0.00017f, 90)
+                                    .emit(getView().findViewById(R.id.emiter_bot_center), 20,5500);
+                            new ParticleSystem(getActivity(), 80, R.drawable.chakra, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, 160, 200)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(0.00017f, 0)
+                                    .emit(getView().findViewById(R.id.emiter_left), 20,5600);
+                            new ParticleSystem(getActivity(), 80, R.drawable.polygon, 10000)
+                                    .setSpeedModuleAndAngleRange(0f, 0.1f, -20, 20)
+                                    .setRotationSpeed(360)
+                                    .setAcceleration(-0.00017f, 0)
+                                    .emit(getView().findViewById(R.id.emiter_right), 20,5700);
+
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Yaay!!!")
+                                    .setMessage("You have succesfully completed the Slambook!")
+                                    .setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startActivity(new Intent(getContext(), MainActivity.class));
+                                        }
+                                    })
+                                    .setCancelable(false)
+                                    .show();
+
+
+                        }
 
                     } else {
                         // Error in Submission

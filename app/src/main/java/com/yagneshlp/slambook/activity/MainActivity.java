@@ -1,486 +1,328 @@
 package com.yagneshlp.slambook.activity;
 
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.dd.processbutton.iml.ActionProcessButton;
+import com.github.yongjhih.mismeter.MisMeter;
+import com.michaldrabik.tapbarmenulib.TapBarMenu;
+
+import com.onurciner.toastox.ToastOXDialog;
 import com.yagneshlp.slambook.R;
 
-import com.yagneshlp.slambook.R;
-import com.yagneshlp.slambook.fragment.HomeFragment;
-import com.yagneshlp.slambook.fragment.MoviesFragment;
-import com.yagneshlp.slambook.fragment.NotificationsFragment;
-import com.yagneshlp.slambook.fragment.OneFragment;
-import com.yagneshlp.slambook.fragment.PhotosFragment;
-import com.yagneshlp.slambook.fragment.SettingsFragment;
-import com.yagneshlp.slambook.fragment.TwoFragment;
+import com.yagneshlp.slambook.app.AppConfig;
+import com.yagneshlp.slambook.app.AppController;
 import com.yagneshlp.slambook.helper.SQLiteHandler;
 import com.yagneshlp.slambook.helper.SessionManager;
-import com.yagneshlp.slambook.other.CircleTransform;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-    private NavigationView navigationView;
-    private DrawerLayout drawer;
-    private View navHeader;
-    private ImageView imgNavHeaderBg, imgProfile;
-    private TextView txtName, txtWebsite;
-    private Toolbar toolbar;
-    private FloatingActionButton fab;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private  SessionManager session;
 
-    // urls to load navigation header background image
-    // and profile image
-    private static final String urlNavHeaderBg = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-    private static final String urlProfileImg = "http://192.168.1.6/pict.jpg";
+import static android.view.View.GONE;
 
-    // index to identify current nav menu item
-    public static int navItemIndex = 0;
+public class MainActivity extends Activity {
 
-    // tags used to attach the fragments
-    private static final String TAG_HOME = "home";
-    private static final String TAG_PHOTOS = "photos";
-    private static final String TAG_MOVIES = "movies";
-    private static final String TAG_NOTIFICATIONS = "notifications";
-    private static final String TAG_SETTINGS = "settings";
-    public static String CURRENT_TAG = TAG_HOME;
-
-    // toolbar titles respected to selected nav menu item
-    private String[] activityTitles;
-
-    // flag to load home fragment when user presses back key
-    private boolean shouldLoadHomeFragOnBackPress = true;
-
-    private Handler mHandler;
-    private Handler cHandler;
-
+    private static final String TAG = MainActivity.class.getSimpleName();
+    @Bind(R.id.tapBarMenu) TapBarMenu tapBarMenu;
+    TextView tv,tvPerc;
+     MisMeter meter;
+    ValueAnimator anim;
+    ActionProcessButton button;
+    CardView cv;
+    TapBarMenu t;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        mHandler = new Handler();
-
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        // Navigation view header
-        navHeader = navigationView.getHeaderView(0);
-        txtName = (TextView) navHeader.findViewById(R.id.name);
-        txtWebsite = (TextView) navHeader.findViewById(R.id.website);
-        imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-        imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
-
-
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // load toolbar titles from string resources
-        activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        t=(TapBarMenu) findViewById(R.id.tapBarMenu);
+        t.setVisibility(View.INVISIBLE);
+        meter = (MisMeter) findViewById(R.id.meter);
+        tv=(TextView) findViewById(R.id.tview);
+        tvPerc = (TextView) findViewById(R.id.percComp);
+        tvPerc.setVisibility(GONE);
+        cv= (CardView) findViewById(R.id.cardView);
+        button = (ActionProcessButton) findViewById(R.id.btn_fill);
+        button.setMode(ActionProcessButton.Mode.ENDLESS);
+        tv.setVisibility(View.INVISIBLE);
+        cv.setVisibility(GONE);
+        insert_into();
+        t.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                t.toggle();
+            }
+        });
+        ButterKnife.bind(this);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                button.setProgress(1);
                 ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                                startActivity(new Intent(MainActivity.this,SlambookActivity.class));
-                             }
+                        startActivity(new Intent(MainActivity.this,SlambookActivity.class));
+                        button.setProgress(100);
+                    }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         startActivity(new Intent(MainActivity.this,SlambookActivity.class));
+                        button.setProgress(100);
                     }
                 } else {
-                    Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
-                            .setAction("WIfi", new View.OnClickListener() {
+                    //Alerter.create(MainActivity.this)
+                      //      .setTitle("Alert Title")
+                        //    .setText("Alert text...")
+                          //  .show();
+
+                    new ToastOXDialog.Build(MainActivity.this)
+                            .setTitle("No Internet!")
+                            .setContent("No Internet Connection Detected!\nCannot Ping server")
+                            .setPositiveText("Wi-Fi")
+                            //.setPositiveBackgroundColorResource(R.color.orange)
+                            //.setPositiveTextColorResource(R.color.black)
+                            .onPositive(new ToastOXDialog.ButtonCallback() {
                                 @Override
-                                public void onClick(View v) {
+                                public void onClick(@NonNull ToastOXDialog toastOXDialog) {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                    Log.i("Click","Yes");
                                 }
+                            })
+                            .setNegativeText("Mobile Data")
+                           // .setNegativeBackgroundColorResource(R.color.black)
+                            //.setNegativeTextColorResource(R.color.orange)
+                            .onNegative(new ToastOXDialog.ButtonCallback(){
+                                @Override
+                                public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                                    startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                    Log.w("Click","No");
+                                }
+                            }).show();
+                }
+            }
+        }
+        );
+
+    }
+
+    @OnClick({ R.id.item1, R.id.item2, R.id.item3, R.id.item4 }) public void onMenuItemClick(View view) {
+        tapBarMenu.close();
+        switch (view.getId()) {
+            case R.id.item1:
+            {
+                Log.i(TAG, "Reminder option");
+                startActivity(new Intent(MainActivity.this,ReminderActivity.class));
+                break;
+            }
+
+            case R.id.item2:
+                Log.i(TAG, "ISetttings Option");
+                break;
+            case R.id.item3:
+                Log.i(TAG, "Help option");
+                break;
+            case R.id.item4:
+            {
+                Log.i(TAG, "Log out option");
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Log out?")
+                        .setMessage("Are you sure you want to Log out?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SQLiteHandler db;
+                                SessionManager session;
+                                // SqLite database handler
+                                db = new SQLiteHandler(getApplicationContext());
+                                // session manager
+                                session = new SessionManager(getApplicationContext());
+                                session.setLogin(false);
+                                db.deleteUsers();
+                                // Launching the login activity
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                                Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
                             }
-                           ).show();
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+
+
+
+                break;
+            }
+        }
+    }
+    private void insert_into() {
+
+
+        String tag_string_req = "req_Homefragment_Sub";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_INSERT, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Homefragemnt request Response: " + response.toString());
+                t.setVisibility(View.VISIBLE);
+
+                try {
+                    JSONObject jObj = new JSONObject(response); //objectifying the json
+                    boolean error = jObj.getBoolean("error");  //detecting if an error was sent in json
+
+                    // Check for error node in json
+                    if (!error) {
+                        //Submitted Successfully
+
+                        String errorMsg = jObj.getString("message"); //extracting the message
+                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
+                        SessionManager cur = new SessionManager(getApplication()); //setting the percentage in local preferences
+                        final int progress = jObj.getInt("value");                //     "
+                        cur.setPercentage(progress);                           //      "
+                        String name=cur.getUsername();
+                        if(progress==0) //
+                        {
+                            meter.setVisibility(GONE);
+                            tv.setText("Hey " + name + " ! \nWhat are you waiting for?\nStart Filling the Slam book!");
+                            tv.setVisibility(View.VISIBLE);
+                            cv.setVisibility(View.VISIBLE);
+                            tv.setTextSize(30);
+                            tv.setPadding(0,20,0,0);
+                        }
+                        else
+                        {
+                         if(progress != 100)
+                            {
+                             tv.setText("\nNot yet Completed :( \nContinue Filling the Slambook");
+                                Log.d(TAG,"Progresss was found to be non 100 or zero");
+                            }
+                            anim = ValueAnimator.ofFloat(meter.progress, progress/100f );
+                            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+                            anim.setDuration(1000);
+                            anim.setStartDelay(1000);
+                            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                meter.setProgress((float) valueAnimator.getAnimatedValue());
+                               if((float) valueAnimator.getAnimatedValue()== 1f)
+                                    {
+                                        meter.setVisibility(GONE);
+                                        tv.setText("Congrats! You have finished the Slambook");
+                                        tv.setPadding(0,40,0,0);
+                                        tv.setVisibility(View.VISIBLE);
+                                     }
+
+                                if((float) valueAnimator.getAnimatedValue()== progress/100f && (float) valueAnimator.getAnimatedValue() != 1f)
+                                    {
+                                        tv.setVisibility(View.VISIBLE);
+                                        cv.setVisibility(View.VISIBLE);
+                                        tvPerc.setVisibility(View.VISIBLE);
+                                    }
+                            }
+
+                        }); Log.d(TAG,"animator properties defined");
+                            anim.start();
+                            Log.d(TAG,"Animation started");
+
+                        }
+
+                    } else {
+                        // Error in Submission
+
+                        String errorMsg = jObj.getString("message"); //extracting the error
+                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
+                        Toast.makeText(getApplication(),"An Error occured and logged, try Again", Toast.LENGTH_LONG).show(); //displaying an error to the user
+                    }
+                } catch (JSONException e) {
+                    // JSON data was not returned, because an error at php script/mysql
+
+                    e.printStackTrace(); //logging error
+                    Toast.makeText(getApplication(), "Internal error occured, try again later", Toast.LENGTH_LONG).show(); //displaying an error to the user
                 }
 
             }
-        });
-
-        // load nav menu header data
-        loadNavHeader();
-
-        // initializing navigation menu
-        setUpNavigationView();
-
-        if (savedInstanceState == null) {
-            navItemIndex = 0;
-            CURRENT_TAG = TAG_HOME;
-            loadHomeFragment();
-        }
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "Summary");
-        adapter.addFragment(new TwoFragment(), "Your Slam");
-
-        viewPager.setAdapter(adapter);
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
-
-    /***
-     * Load navigation menu header information
-     * like background image, profile image
-     * name, website, notifications action view (dot)
-     */
-    private void loadNavHeader() {
-        // name, website
-        session = new SessionManager(this);
-        txtName.setText(session.getUsername());
-
-
-        // loading header background image
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
-
-        // Loading profile image
-        Glide.with(this).load(urlProfileImg)
-                .crossFade()
-                .thumbnail(0.5f)
-                .bitmapTransform(new CircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgProfile);
-
-        // showing dot next to notifications label
-        navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
-    }
-
-    /***
-     * Returns respected fragment that user
-     * selected from navigation menu
-     */
-    private void loadHomeFragment() {
-        // selecting appropriate nav menu item
-        selectNavMenu();
-
-        // set toolbar title
-        setToolbarTitle();
-
-        // if user select the current navigation menu again, don't do anything
-        // just close the navigation drawer
-        if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
-            drawer.closeDrawers();
-
-            // show or hide the fab button
-            toggleFab();
-            return;
-        }
-
-        // Sometimes, when fragment has huge data, screen seems hanging
-        // when switching between navigation menus
-        // So using runnable, the fragment is loaded with cross fade effect
-        // This effect can be seen in GMail app
-        Runnable mPendingRunnable = new Runnable() {
+        }, new Response.ErrorListener() {
             @Override
-            public void run() {
-                // update the main content by replacing fragments
-                Fragment fragment = getHomeFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-                fragmentTransaction.commitAllowingStateLoss();
+            public void onErrorResponse(VolleyError error) {
+
+                Log.e(TAG, "Volley Error: " + error.getMessage()); //error in android part logged
+                new ToastOXDialog.Build(MainActivity.this)
+                        .setTitle("Something's Wrong :(")
+                        .setContent("Cannot Ping server. Might be a poor or unstable connection")
+                        .setPositiveText("Wi-Fi")
+                        //.setPositiveBackgroundColorResource(R.color.orange)
+                        //.setPositiveTextColorResource(R.color.black)
+                        .onPositive(new ToastOXDialog.ButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                Log.i("Click","Yes");
+                            }
+                        })
+                        .setNegativeText("Mobile Data")
+                        // .setNegativeBackgroundColorResource(R.color.black)
+                        //.setNegativeTextColorResource(R.color.orange)
+                        .onNegative(new ToastOXDialog.ButtonCallback(){
+                            @Override
+                            public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                Log.w("Click","No");
+                            }
+                        }).show();
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                SQLiteHandler db= new SQLiteHandler(getApplication());  //object of the sqlLite helper
+                SessionManager cur = new SessionManager(getApplication());  //object of the session manager
+                String uid=db.getUserID();  //getting the current userid from local db
+                String uname=cur.getUsername(); //getting current user name from sessionmnager
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("route", "30");               //   json POST paran add
+                params.put("userid",uid);               //   "
+                params.put("username", uname);          //    "
+                params.put("need", "get");          //    "
+                params.put("requirement", "progress");       //    "
+                params.put("value", "null");
+                return params;  //returning ready json
             }
         };
-
-        // If mPendingRunnable is not null, then add to the message queue
-        if (mPendingRunnable != null) {
-            mHandler.post(mPendingRunnable);
-        }
-
-        // show or hide the fab button
-        toggleFab();
-
-        //Closing drawer on item click
-        drawer.closeDrawers();
-
-        // refresh toolbar menu
-        invalidateOptionsMenu();
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private Fragment getHomeFragment() {
-        switch (navItemIndex) {
-            case 0:
-                // home
-                HomeFragment homeFragment = new HomeFragment();
-                return homeFragment;
-            case 1:
-                // photos
-                PhotosFragment photosFragment = new PhotosFragment();
-                return photosFragment;
-            case 2:
-                // movies fragment
-                MoviesFragment moviesFragment = new MoviesFragment();
-                return moviesFragment;
-            case 3:
-                // notifications fragment
-                NotificationsFragment notificationsFragment = new NotificationsFragment();
-                return notificationsFragment;
-
-            case 4:
-                // settings fragment
-                SettingsFragment settingsFragment = new SettingsFragment();
-                return settingsFragment;
-            default:
-                return new HomeFragment();
-        }
-    }
-
-    private void setToolbarTitle() {
-        getSupportActionBar().setTitle(activityTitles[navItemIndex]);
-    }
-
-    private void selectNavMenu() {
-        navigationView.getMenu().getItem(navItemIndex).setChecked(true);
-    }
-
-    private void setUpNavigationView() {
-        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-
-            // This method will trigger on item Click of navigation menu
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-
-                //Check to see which item was being clicked and perform appropriate action
-                switch (menuItem.getItemId()) {
-                    //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.home:
-                        navItemIndex = 0;
-                        CURRENT_TAG = TAG_HOME;
-                        break;
-                    case R.id.nav_photos:
-                        navItemIndex = 1;
-                        CURRENT_TAG = TAG_PHOTOS;
-                        break;
-                    case R.id.nav_movies:
-                        navItemIndex = 2;
-                        CURRENT_TAG = TAG_MOVIES;
-                        break;
-                    case R.id.nav_notifications:
-                        navItemIndex = 3;
-                        CURRENT_TAG = TAG_NOTIFICATIONS;
-                        break;
-                    case R.id.nav_settings:
-                        navItemIndex = 4;
-                        CURRENT_TAG = TAG_SETTINGS;
-                        break;
-                    case R.id.nav_about_us:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    case R.id.nav_privacy_policy:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    default:
-                        navItemIndex = 0;
-                }
-
-                //Checking if the item is in checked state or not, if not make it in checked state
-                if (menuItem.isChecked()) {
-                    menuItem.setChecked(false);
-                } else {
-                    menuItem.setChecked(true);
-                }
-                menuItem.setChecked(true);
-
-                loadHomeFragment();
-
-                return true;
-            }
-        });
-
-
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
-                super.onDrawerClosed(drawerView);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
-                super.onDrawerOpened(drawerView);
-            }
-        };
-
-        //Setting the actionbarToggle to drawer layout
-        drawer.setDrawerListener(actionBarDrawerToggle);
-
-        //calling sync state is necessary or else your hamburger icon wont show up
-        actionBarDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawers();
-            return;
-        }
-
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-        if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_HOME;
-                loadHomeFragment();
-                return;
-            }
-        }
-
-        super.onBackPressed();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
-        // show menu only when home fragment is selected
-        if (navItemIndex == 0) {
-            getMenuInflater().inflate(R.menu.main, menu);
-        }
-
-        // when fragment is notifications, load the menu created for notifications
-        if (navItemIndex == 3) {
-            getMenuInflater().inflate(R.menu.notifications, menu);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-
-            SQLiteHandler db;
-            SessionManager session;
-            // SqLite database handler
-            db = new SQLiteHandler(getApplicationContext());
-            // session manager
-            session = new SessionManager(getApplicationContext());
-            session.setLogin(false);
-            db.deleteUsers();
-            // Launching the login activity
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-
-            Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
-            return true;
-        }
-
-        // user is in notifications fragment
-        // and selected 'Mark all as Read'
-        if (id == R.id.action_mark_all_read) {
-            Toast.makeText(getApplicationContext(), "All notifications marked as read!", Toast.LENGTH_LONG).show();
-        }
-
-        // user is in notifications fragment
-        // and selected 'Clear All'
-        if (id == R.id.action_clear_notifications) {
-            Toast.makeText(getApplicationContext(), "Clear all notifications!", Toast.LENGTH_LONG).show();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    // show or hide the fab
-    private void toggleFab() {
-        if (navItemIndex == 0)
-            fab.show();
-        else
-            fab.hide();
-    }
 }

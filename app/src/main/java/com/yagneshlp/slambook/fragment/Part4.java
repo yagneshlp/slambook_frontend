@@ -95,7 +95,7 @@ public class Part4 extends Fragment {
     private Button buttonChoose;
     private ActionProcessButton buttonUpload;
     private ImageView imageView;
-    private EditText editText;
+
     private TextView text;
     private String filePath = null;
     long totalSize = 0;
@@ -133,7 +133,6 @@ public class Part4 extends Fragment {
         buttonChoose = (Button) view.findViewById(R.id.buttonChoose);
         buttonUpload = (ActionProcessButton) view.findViewById(R.id.buttonUpload);
         imageView = (ImageView) view.findViewById(R.id.imageView);
-        editText = (EditText) view.findViewById(R.id.editTextName);
         text = (TextView)  view.findViewById(R.id.textSelf);
 
 
@@ -654,7 +653,7 @@ public class Part4 extends Fragment {
                 params.put("route", "4");
                 params.put("userid", uid);
                 params.put("username", uname);
-                params.put("dummy", "blahBLAH");
+                params.put("activity_slambook", "blahBLAH");
 
 
                 return params;
