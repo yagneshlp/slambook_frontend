@@ -1,29 +1,14 @@
 package com.yagneshlp.slambook.activity;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.adammcneilly.ActionButton;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.yagneshlp.slambook.R;
-import com.yagneshlp.slambook.app.AppConfig;
-import com.yagneshlp.slambook.app.AppController;
-import com.yagneshlp.slambook.fragment.OneFragment;
 import com.yagneshlp.slambook.fragment.Part1;
 import com.yagneshlp.slambook.fragment.Part10;
 import com.yagneshlp.slambook.fragment.Part11;
@@ -47,15 +32,9 @@ import com.yagneshlp.slambook.fragment.Part6;
 import com.yagneshlp.slambook.fragment.Part7;
 import com.yagneshlp.slambook.fragment.Part8;
 import com.yagneshlp.slambook.fragment.Part9;
-import com.yagneshlp.slambook.fragment.TwoFragment;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SlambookActivity extends AppCompatActivity {
 
@@ -66,7 +45,7 @@ public class SlambookActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dummy);
+        setContentView(R.layout.activity_slambook);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 

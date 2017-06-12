@@ -47,7 +47,7 @@
                     android:textSize="20sp"
                     android:id="@+id/textSelf"
                     android:paddingTop="5dp"
-                    android:text="Selfie Time! \nChoose an Image of you"
+                    android:text="Selfie Time! "
                     />
 
                 <Button
@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Select Image" />
+                    android:text="Launch Camera" />
 
                 <com.dd.processbutton.iml.ActionProcessButton
                     android:id="@+id/buttonUpload"

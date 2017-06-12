@@ -318,8 +318,8 @@
                            android:layout_height="wrap_content"
                            android:layout_marginLeft="5sp"
                            android:layout_gravity="center"
-                           custom:textToggleLeft="Yes"
-                           custom:textToggleRight="No"
+                           custom:textToggleLeft="Intro"
+                           custom:textToggleRight="Extro"
                            android:id="@+id/q9"
                            />
                    </TableRow>
