@@ -1,5 +1,7 @@
 package com.yagneshlp.slambook.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -7,14 +9,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +37,7 @@ import com.github.yongjhih.mismeter.MisMeter;
 import com.michaldrabik.tapbarmenulib.TapBarMenu;
 
 import com.onurciner.toastox.ToastOXDialog;
+import com.tapadoo.alerter.Alerter;
 import com.yagneshlp.slambook.R;
 
 import com.yagneshlp.slambook.app.AppConfig;
@@ -46,7 +57,7 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
     private static final String TAG = MainActivity.class.getSimpleName();
     @Bind(R.id.tapBarMenu) TapBarMenu tapBarMenu;
@@ -54,25 +65,54 @@ public class MainActivity extends Activity {
      MisMeter meter;
     ValueAnimator anim;
     ActionProcessButton button;
-    CardView cv;
+    CardView cv,cvM;
     TapBarMenu t;
+    FrameLayout fL;
+    LinearLayout lL;
+    String uname;
+    boolean val;
+    LinearLayout l1;
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        insert_into();
+    }
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        val=getIntent().getBooleanExtra("displayAlerter",false);
         t=(TapBarMenu) findViewById(R.id.tapBarMenu);
+        l1=(LinearLayout) findViewById(R.id.linearmain);
         t.setVisibility(View.INVISIBLE);
         meter = (MisMeter) findViewById(R.id.meter);
         tv=(TextView) findViewById(R.id.tview);
         tvPerc = (TextView) findViewById(R.id.percComp);
+        fL=(FrameLayout) findViewById(R.id.mainFrame);
+        lL=(LinearLayout) findViewById(R.id.linMain);
         tvPerc.setVisibility(GONE);
         cv= (CardView) findViewById(R.id.cardView);
+        cvM= (CardView) findViewById(R.id.cardView2);
         button = (ActionProcessButton) findViewById(R.id.btn_fill);
         button.setMode(ActionProcessButton.Mode.ENDLESS);
         tv.setVisibility(View.INVISIBLE);
         cv.setVisibility(GONE);
         insert_into();
+        SessionManager cur = new SessionManager(this);
+        uname=cur.getUsername();
+        if(val)
+            showAlerter();
         t.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,18 +129,19 @@ public class MainActivity extends Activity {
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                        finish();
                         startActivity(new Intent(MainActivity.this,SlambookActivity.class));
+                        overridePendingTransition(R.anim.fade_out,R.anim.no_change);
                         button.setProgress(100);
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                        finish();
                         startActivity(new Intent(MainActivity.this,SlambookActivity.class));
+                        overridePendingTransition(R.anim.fade_out,R.anim.no_change);
                         button.setProgress(100);
                     }
                 } else {
-                    //Alerter.create(MainActivity.this)
-                      //      .setTitle("Alert Title")
-                        //    .setText("Alert text...")
-                          //  .show();
+
 
                     new ToastOXDialog.Build(MainActivity.this)
                             .setTitle("No Internet!")
@@ -113,6 +154,7 @@ public class MainActivity extends Activity {
                                 public void onClick(@NonNull ToastOXDialog toastOXDialog) {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                     Log.i("Click","Yes");
+                                    closeContextMenu();
                                 }
                             })
                             .setNegativeText("Mobile Data")
@@ -123,6 +165,7 @@ public class MainActivity extends Activity {
                                 public void onClick(@NonNull ToastOXDialog toastOXDialog) {
                                     startActivity(new Intent(Settings.ACTION_SETTINGS));
                                     Log.w("Click","No");
+                                    closeContextMenu();
                                 }
                             }).show();
                 }
@@ -138,15 +181,23 @@ public class MainActivity extends Activity {
             case R.id.item1:
             {
                 Log.i(TAG, "Reminder option");
+                finish();
                 startActivity(new Intent(MainActivity.this,ReminderActivity.class));
+                overridePendingTransition(R.anim.slide_left,R.anim.no_change);
                 break;
             }
 
             case R.id.item2:
-                Log.i(TAG, "ISetttings Option");
+                Log.i(TAG, "Profile Option");
+                finishAffinity();
+                startActivity(new Intent(MainActivity.this,ProfileActivity.class));
+                overridePendingTransition(R.anim.pull_up_from_bottom,R.anim.no_change);
                 break;
             case R.id.item3:
                 Log.i(TAG, "Help option");
+                finishAffinity();
+                startActivity(new Intent(MainActivity.this,HelpActivity.class));
+                overridePendingTransition(R.anim.slide_right,R.anim.no_change);
                 break;
             case R.id.item4:
             {
@@ -205,7 +256,8 @@ public class MainActivity extends Activity {
                     // Check for error node in json
                     if (!error) {
                         //Submitted Successfully
-
+                        lL.setVisibility(View.INVISIBLE);
+                        fL.setVisibility(View.VISIBLE);
                         String errorMsg = jObj.getString("message"); //extracting the message
                         Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
                         SessionManager cur = new SessionManager(getApplication()); //setting the percentage in local preferences
@@ -225,9 +277,11 @@ public class MainActivity extends Activity {
                         {
                          if(progress != 100)
                             {
-                             tv.setText("\nNot yet Completed :( \nContinue Filling the Slambook");
+                             tv.setText("\nNot yet Completed :(");
+                                button.setText("Continue filling");
                                 Log.d(TAG,"Progresss was found to be non 100 or zero");
                             }
+                            cvM.setVisibility(View.VISIBLE);
                             anim = ValueAnimator.ofFloat(meter.progress, progress/100f );
                             anim.setInterpolator(new AccelerateDecelerateInterpolator());
                             anim.setDuration(1000);
@@ -238,17 +292,70 @@ public class MainActivity extends Activity {
                                 meter.setProgress((float) valueAnimator.getAnimatedValue());
                                if((float) valueAnimator.getAnimatedValue()== 1f)
                                     {
-                                        meter.setVisibility(GONE);
                                         tv.setText("Congrats! You have finished the Slambook");
                                         tv.setPadding(0,40,0,0);
-                                        tv.setVisibility(View.VISIBLE);
+                                        tv.setAlpha(0.0f);
+                                        meter.setAlpha(1.0f);
+                                        meter.animate()
+                                                .alpha(0.0f)
+                                                .setDuration(700)
+                                                .setListener(new AnimatorListenerAdapter() {
+                                                    @Override
+                                                    public void onAnimationEnd(Animator animation) {
+                                                        super.onAnimationEnd(animation);
+                                                        tv.setVisibility(View.VISIBLE);
+                                                        tv.animate()
+                                                                .alpha(1.0f)
+                                                                .setDuration(600)
+                                                                .setListener(new AnimatorListenerAdapter() {
+                                                                    @Override
+                                                                    public void onAnimationEnd(Animator animation) {
+                                                                        super.onAnimationEnd(animation);
+                                                                        meter.setVisibility(GONE);
+                                                                        FrameLayout.LayoutParams lay = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT);
+
+                                                                        lay.gravity = Gravity.CENTER;
+                                                                        cv.setLayoutParams(lay);
+                                                                    }
+                                                                });
+
+                                                    }
+                                                });
+
+
                                      }
 
                                 if((float) valueAnimator.getAnimatedValue()== progress/100f && (float) valueAnimator.getAnimatedValue() != 1f)
                                     {
+                                        tv.setAlpha(0f);
+                                        cv.setAlpha(0f);
+                                        tvPerc.setAlpha(0f);
                                         tv.setVisibility(View.VISIBLE);
                                         cv.setVisibility(View.VISIBLE);
                                         tvPerc.setVisibility(View.VISIBLE);
+                                        tvPerc.animate()
+                                                .alpha(1.0f)
+                                                .setDuration(500)
+                                                .setListener(new AnimatorListenerAdapter() {
+                                                    @Override
+                                                    public void onAnimationEnd(Animator animation) {
+                                                        super.onAnimationEnd(animation);
+                                                        tv.animate()
+                                                                .alpha(1.0f)
+                                                                .setDuration(600)
+                                                                .setListener(new AnimatorListenerAdapter() {
+                                                                    @Override
+                                                                    public void onAnimationEnd(Animator animation) {
+                                                                        super.onAnimationEnd(animation);
+                                                                        cv.animate()
+                                                                                .alpha(1.0f)
+                                                                                .setDuration(1000);
+                                                                    }
+                                                                });
+                                                    }
+                                                });
+
+
                                     }
                             }
 
@@ -278,6 +385,8 @@ public class MainActivity extends Activity {
             public void onErrorResponse(VolleyError error) {
 
                 Log.e(TAG, "Volley Error: " + error.getMessage()); //error in android part logged
+              fL.setVisibility(View.INVISIBLE);
+                lL.setVisibility(View.VISIBLE);
                 new ToastOXDialog.Build(MainActivity.this)
                         .setTitle("Something's Wrong :(")
                         .setContent("Cannot Ping server. Might be a poor or unstable connection")
@@ -289,6 +398,7 @@ public class MainActivity extends Activity {
                             public void onClick(@NonNull ToastOXDialog toastOXDialog) {
                                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 Log.i("Click","Yes");
+
                             }
                         })
                         .setNegativeText("Mobile Data")
@@ -299,8 +409,11 @@ public class MainActivity extends Activity {
                             public void onClick(@NonNull ToastOXDialog toastOXDialog) {
                                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                                 Log.w("Click","No");
+
                             }
-                        }).show();
+                        })
+                        .autoDismiss(true)
+                        .show();
             }
         })
         {
@@ -323,6 +436,20 @@ public class MainActivity extends Activity {
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    public void showAlerter()
+    {
+
+        Alerter.create(MainActivity.this)
+                .setTitle("Hey "+ uname)
+                .setText("Welcome")
+                .setBackgroundColor(R.color.colorPrimary)
+                .hideIcon()
+                .setContentGravity(Gravity.CENTER)
+                .enableVibration(true)
+
+                .show();
     }
 
 }

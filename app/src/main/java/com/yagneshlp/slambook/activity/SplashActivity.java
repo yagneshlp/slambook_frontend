@@ -1,43 +1,67 @@
 package com.yagneshlp.slambook.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 import com.yagneshlp.slambook.R;
+import com.yagneshlp.slambook.fragment.DeterminateViewFragment;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
+public class SplashActivity extends FragmentActivity {
 
-public class SplashActivity extends Activity {
+    private static final String TAG = "MainActivity";
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @Bind(R.id.content_frame)
+    FrameLayout content;
 
-    // Splash screen timer
-    private static int SPLASH_TIME_OUT = 3000;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        new Handler().postDelayed(new Runnable() {
-
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
-
-            @Override
-            public void run() {
-                // This method will be executed once the timer is over
-                // Start your app main activity
-                Intent i = new Intent(SplashActivity.this, WelcomeActivity.class);
-                startActivity(i);
-
-                // close this activity
-                finish();
-            }
-        }, SPLASH_TIME_OUT);
+        ButterKnife.bind(this);
+       // initNavigationView();
+        //configureToolbar();
+        //showHomeView();
+        determinateSampleMenuTouch();
     }
+
+
+
+
+
+
+    private void determinateSampleMenuTouch() {
+        showDeterminateView();
+       // closeNav();
+    }
+
+
+
+
+
+
+
+    private void showDeterminateView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, DeterminateViewFragment.newInstance())
+                .commit();
+    }
+
+
+
 
 }
