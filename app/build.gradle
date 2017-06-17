@@ -53,10 +53,10 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'io.hypertrack:smart-scheduler:0.0.8'
     compile 'com.nightonke:boommenu:2.1.0'
-    compile 'com.github.glomadrian:roadrunner:1.0@aar'
+    compile 'com.mikhaellopez:circularfillableloaders:1.2.0'
     compile 'com.mikhaellopez:circularimageview:3.0.2'
     compile 'com.fxn769:oblique:1.0'
-    compile 'com.unipiazza.materialtwostepslogin:materialtwostepslogin:0.2'
+    compile 'com.github.glomadrian:Grav:1.1'
     testCompile 'junit:junit:4.12'
 }
 allprojects {

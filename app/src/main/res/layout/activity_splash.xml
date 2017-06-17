@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#414141"
     android:fitsSystemWindows="false"
+    android:padding="40dp"
+    android:orientation="vertical">
 
-    >
+    <com.mikhaellopez.circularfillableloaders.CircularFillableLoaders
+        android:id="@+id/circularFillableLoaders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/logo"
+        app:cfl_border="true"
+        app:cfl_border_width="5dp"
+        app:cfl_progress="60"
+        app:cfl_wave_amplitude="0.1"
+        app:cfl_wave_color="@color/colorPrimary" />
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-
-        <FrameLayout
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </LinearLayout>
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/splashStatus"
+        android:textAlignment="center"
+        android:textColor="#88ffffff"
+        android:text="Hello there!"/>
 
 
-</android.support.v4.widget.DrawerLayout>
+</RelativeLayout>

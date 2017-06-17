@@ -61,4 +61,12 @@
     <color name="yt_red">#cd201f</color>
     <color name="tw_blu"> #00aced</color>
 
+    <color name="bg_blue_deep">#242A38</color>
+    <color name="bg_white">#FFFFFF</color>
+    <color name="bg_gray">#C5C9CC</color>
+
+    <color name="font_gray">#A6AFC6</color>
+    <color name="font_blue_deep">#242A38</color>
+    <color name="font_white">#ffffff</color>
+
 </resources>

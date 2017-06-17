@@ -160,7 +160,7 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="10dp"
             app:tbm_buttonSize="40dp"
-            app:tbm_backgroundColor="@color/colorPrimary"
+            app:tbm_backgroundColor="@color/colorPrimaryDark"
             app:tbm_menuAnchor="bottom"
 
             >

@@ -38,6 +38,7 @@ public class RegisterActivity extends Activity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText inputPasswordConf;
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
@@ -51,6 +52,7 @@ public class RegisterActivity extends Activity {
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         btnRegister = (Button) findViewById(R.id.btnRegister);
+        inputPasswordConf = (EditText) findViewById(R.id.passwordConf);
         btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
 
         // Progress dialog
@@ -78,14 +80,23 @@ public class RegisterActivity extends Activity {
                 String name = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+                String passwordConf = inputPasswordConf.getText().toString().trim();
 
                 if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    registerUser(name, email, password);
+                    if(password.equals(passwordConf))
+                        registerUser(name, email, password);
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Passwords do not match!",Toast.LENGTH_LONG);
+                        inputPassword.setText("");
+                        inputPasswordConf.setText("");
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(),
-                            "Please enter your details!", Toast.LENGTH_LONG)
+                            "Please enter all the details!", Toast.LENGTH_LONG)
                             .show();
                 }
+
             }
         });
 
