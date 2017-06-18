@@ -95,6 +95,8 @@ public class Part1 extends Fragment {
                                     }
                             ).show();
                 }}
+                else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
 
             }
         });

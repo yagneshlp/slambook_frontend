@@ -60,6 +60,8 @@ public class Part12 extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(Et1.getText().toString().length()!=0 && Et2.getText().toString().length()!=0 )
+                {
 
                 ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -81,7 +83,9 @@ public class Part12 extends Fragment {
                                         }
                                     }
                             ).show();
-                }
+                }}
+                else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
 
 
 

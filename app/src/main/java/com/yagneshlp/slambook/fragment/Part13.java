@@ -59,15 +59,15 @@ public class Part13 extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(Et1.getText().toString().length()!=0 && Et2.getText().toString().length()!=0 )
+                {
                 ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
                         checker();
-                    }
-                    else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
                         checker();
                     }
@@ -81,6 +81,9 @@ public class Part13 extends Fragment {
                                     }
                             ).show();
                 }
+            }
+            else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
 
 
             }

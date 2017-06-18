@@ -82,7 +82,8 @@ public class Part11 extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(Et1.getText().toString().length()==0 )
+                    Et1.setText("No Series watched");
                 ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 if (activeNetwork != null) { // connected to the internet

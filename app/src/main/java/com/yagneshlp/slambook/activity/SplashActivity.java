@@ -1,5 +1,6 @@
 package com.yagneshlp.slambook.activity;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -24,6 +25,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class SplashActivity extends Activity {
 
@@ -54,6 +58,8 @@ public class SplashActivity extends Activity {
         pseudoAnim();
 
          }
+
+
 
     private void pseudoAnim()
     {

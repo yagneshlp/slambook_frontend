@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -72,6 +73,7 @@ public class MainActivity extends Activity{
     String uname;
     boolean val;
     LinearLayout l1;
+    Button logout;
 
     @Override
     protected void onResume()
@@ -95,6 +97,8 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
         val=getIntent().getBooleanExtra("displayAlerter",false);
         t=(TapBarMenu) findViewById(R.id.tapBarMenu);
+        logout = (Button) findViewById(R.id.logOut);
+        logout.setVisibility(GONE);
         l1=(LinearLayout) findViewById(R.id.linearmain);
         t.setVisibility(View.INVISIBLE);
         meter = (MisMeter) findViewById(R.id.meter);
@@ -121,6 +125,25 @@ public class MainActivity extends Activity{
             }
         });
         ButterKnife.bind(this);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SQLiteHandler db;
+                SessionManager session;
+                // SqLite database handler
+                db = new SQLiteHandler(getApplicationContext());
+                // session manager
+                session = new SessionManager(getApplicationContext());
+                session.setLogin(false);
+                db.deleteUsers();
+                // Launching the login activity
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                Toast.makeText(getApplicationContext(), "Thanks a Lot, Mate ;) ", Toast.LENGTH_LONG).show();
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,7 +244,7 @@ public class MainActivity extends Activity{
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
-                                Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "User Logged Out!", Toast.LENGTH_LONG).show();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -314,9 +337,11 @@ public class MainActivity extends Activity{
                                                                         super.onAnimationEnd(animation);
                                                                         meter.setVisibility(GONE);
                                                                         FrameLayout.LayoutParams lay = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT);
-
                                                                         lay.gravity = Gravity.CENTER;
                                                                         cv.setLayoutParams(lay);
+                                                                        logout.setVisibility(View.VISIBLE);
+                                                                        t.setVisibility(GONE);
+
                                                                     }
                                                                 });
 

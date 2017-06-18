@@ -57,6 +57,12 @@ dependencies {
     compile 'com.mikhaellopez:circularimageview:3.0.2'
     compile 'com.fxn769:oblique:1.0'
     compile 'com.github.glomadrian:Grav:1.1'
+    compile 'agency.tango.android:avatar-view:0.0.2'
+    compile 'agency.tango.android:avatar-view-picasso:0.0.2'
+    compile 'agency.tango.android:avatar-view-glide:0.0.2'
+    compile 'com.github.glomadrian:Grav:1.1'
+    compile 'com.github.joaquimley:faboptions:1.1.2'
+    compile 'pub.devrel:easypermissions:0.4.2'
     testCompile 'junit:junit:4.12'
 }
 allprojects {

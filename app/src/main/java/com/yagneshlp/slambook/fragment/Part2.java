@@ -105,29 +105,31 @@ public class Part2 extends Fragment {
                     Et2.setText("000");
                 if(Et3.getText().length()==0)
                     Et3.setText("000");
+                if(Et1.getText().toString().length()!=0 || Et4.getText().toString().length()!=0 ) {
+                    ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    if (activeNetwork != null) { // connected to the internet
+                        if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                            button.setProgress(1);
+                            checker();
 
-                ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                if (activeNetwork != null) { // connected to the internet
-                    if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                        button.setProgress(1);
-                        checker();
-
-                    }
-                    else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        button.setProgress(1);
-                       checker();
-                    }
-                } else {
-                    Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
-                            .setAction("WIfi", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                            button.setProgress(1);
+                            checker();
+                        }
+                    } else {
+                        Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
+                                .setAction("WIfi", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                            }
                                         }
-                                    }
-                            ).show();
+                                ).show();
+                    }
                 }
+                else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
 
 
 
