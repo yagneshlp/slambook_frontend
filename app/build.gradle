@@ -62,7 +62,7 @@ dependencies {
     compile 'agency.tango.android:avatar-view-glide:0.0.2'
     compile 'com.github.glomadrian:Grav:1.1'
     compile 'com.github.joaquimley:faboptions:1.1.2'
-    compile 'pub.devrel:easypermissions:0.4.2'
+    compile 'com.master.android:permissionhelper:1.1'
     testCompile 'junit:junit:4.12'
 }
 allprojects {

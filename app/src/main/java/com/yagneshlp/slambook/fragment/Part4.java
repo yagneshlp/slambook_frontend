@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.master.permissionhelper.PermissionHelper;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -95,7 +97,7 @@ public class Part4 extends Fragment {
     private Button buttonChoose;
     private ActionProcessButton buttonUpload;
     private ImageView imageView;
-
+    PermissionHelper permissionHelper;
     private TextView text;
     private String filePath = null;
     long totalSize = 0;
@@ -134,6 +136,24 @@ public class Part4 extends Fragment {
         buttonUpload = (ActionProcessButton) view.findViewById(R.id.buttonUpload);
         imageView = (ImageView) view.findViewById(R.id.imageView);
         text = (TextView)  view.findViewById(R.id.textSelf);
+
+        permissionHelper = new PermissionHelper(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+        permissionHelper.request(new PermissionHelper.PermissionCallback() {
+            @Override
+            public void onPermissionGranted() {
+                Log.d(TAG, "onPermissionGranted() called");
+            }
+
+            @Override
+            public void onPermissionDenied() {
+                Log.d(TAG, "onPermissionDenied() called");
+            }
+
+            @Override
+            public void onPermissionDeniedBySystem() {
+                Log.d(TAG, "onPermissionDeniedBySystem() called");
+            }
+        });
 
 
        // buttonUpload.setMode(ActionProcessButton.Mode.ENDLESS);
@@ -653,7 +673,7 @@ public class Part4 extends Fragment {
                 params.put("route", "4");
                 params.put("userid", uid);
                 params.put("username", uname);
-                params.put("activity_slambook", "blahBLAH");
+                params.put("dummy", "blahBLAH");
 
 
                 return params;

@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
+import com.master.permissionhelper.PermissionHelper;
 import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 import com.onurciner.toastox.ToastOXDialog;
 import com.yagneshlp.slambook.R;
@@ -26,8 +27,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
+
 
 public class SplashActivity extends Activity {
 
@@ -39,6 +39,7 @@ public class SplashActivity extends Activity {
     ValueAnimator anim;
     CircularFillableLoaders circload;
     int i;
+    PermissionHelper permissionHelper;
 
     @Override
     protected void onResume()
@@ -69,6 +70,23 @@ public class SplashActivity extends Activity {
             public void run() {
                 splashStat.setText("Setting up the Environment");
                 circload.setProgress(10);
+                permissionHelper = new PermissionHelper(SplashActivity.this, new String[]{Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+                permissionHelper.request(new PermissionHelper.PermissionCallback() {
+                    @Override
+                    public void onPermissionGranted() {
+                        Log.d(TAG, "onPermissionGranted() called");
+                    }
+
+                    @Override
+                    public void onPermissionDenied() {
+                        Log.d(TAG, "onPermissionDenied() called");
+                    }
+
+                    @Override
+                    public void onPermissionDeniedBySystem() {
+                        Log.d(TAG, "onPermissionDeniedBySystem() called");
+                    }
+                });
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
