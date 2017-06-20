@@ -9,9 +9,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,7 +30,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.StandardExceptionParser;
+import com.google.android.gms.analytics.Tracker;
 import com.yagneshlp.slambook.R;
+import com.yagneshlp.slambook.app.AnalyticsTrackers;
 import com.yagneshlp.slambook.app.AppConfig;
 import com.yagneshlp.slambook.app.AppController;
 import com.yagneshlp.slambook.helper.SQLiteHandler;
@@ -55,6 +58,7 @@ public class LoginActivity extends Activity {
     private int translateY;
     Intent intentproceed;
 
+
     @Override
     public void onBackPressed()
     {
@@ -65,7 +69,7 @@ public class LoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newlogin);
+        setContentView(R.layout.activity_login);
 
 
         btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
@@ -138,7 +142,7 @@ public class LoginActivity extends Activity {
                 return false;
             }
         });
-        // stereoView.setStartScreen(0);
+        //stereoView.setStartScreen(1);
         stereoView.setResistance(2f);
         stereoView.setCan3D(true);
         stereoView.post(new Runnable() {
@@ -172,6 +176,8 @@ public class LoginActivity extends Activity {
         });
 
     }
+
+
 
     /**
      * function to verify login details in mysql db

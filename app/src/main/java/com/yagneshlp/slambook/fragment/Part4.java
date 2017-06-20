@@ -16,8 +16,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,6 +133,9 @@ public class Part4 extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_part4, container, false);
 
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         //Initializing views
         buttonChoose = (Button) view.findViewById(R.id.buttonChoose);
         buttonUpload = (ActionProcessButton) view.findViewById(R.id.buttonUpload);
@@ -212,8 +217,11 @@ public class Part4 extends Fragment {
      */
     private void captureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = null;
 
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 

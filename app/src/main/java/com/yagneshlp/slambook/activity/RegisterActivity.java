@@ -7,11 +7,14 @@ package com.yagneshlp.slambook.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request.Method;
@@ -42,6 +45,8 @@ public class RegisterActivity extends Activity {
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    CheckBox cb1;
+    TextView tv1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,8 @@ public class RegisterActivity extends Activity {
         btnRegister = (Button) findViewById(R.id.btnRegister);
         inputPasswordConf = (EditText) findViewById(R.id.passwordConf);
         btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
+        cb1 = (CheckBox) findViewById(R.id.chkbox1);
+        tv1 = (TextView) findViewById(R.id.tvagree);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -82,21 +89,37 @@ public class RegisterActivity extends Activity {
                 String password = inputPassword.getText().toString().trim();
                 String passwordConf = inputPasswordConf.getText().toString().trim();
 
-                if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    if(password.equals(passwordConf))
-                        registerUser(name, email, password);
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(),"Passwords do not match!",Toast.LENGTH_LONG);
-                        inputPassword.setText("");
-                        inputPasswordConf.setText("");
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Please enter all the details!", Toast.LENGTH_LONG)
-                            .show();
-                }
+                if(cb1.isChecked()) {
 
+                    if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
+                        if (password.equals(passwordConf))
+                            registerUser(name, email, password);
+                        else {
+                            Toast.makeText(getApplicationContext(), "Passwords do not match!", Toast.LENGTH_LONG);
+                            inputPassword.setText("");
+                            inputPasswordConf.setText("");
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "Please enter all the details!", Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+                else
+                    Toast.makeText(getApplicationContext(),
+                            "Please agree the Terms and conditions", Toast.LENGTH_LONG)
+                            .show();
+
+
+            }
+        });
+        tv1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://10.0.0.20/";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
 

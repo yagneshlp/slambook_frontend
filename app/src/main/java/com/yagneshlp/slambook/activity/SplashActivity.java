@@ -15,10 +15,15 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.StandardExceptionParser;
+import com.google.android.gms.analytics.Tracker;
 import com.master.permissionhelper.PermissionHelper;
 import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 import com.onurciner.toastox.ToastOXDialog;
 import com.yagneshlp.slambook.R;
+import com.yagneshlp.slambook.app.AnalyticsTrackers;
 import com.yagneshlp.slambook.helper.SessionManager;
 
 import android.os.Handler;
@@ -34,12 +39,12 @@ public class SplashActivity extends Activity {
     private static final String TAG = "MainActivity";
 
 
-
     TextView splashStat;
     ValueAnimator anim;
     CircularFillableLoaders circload;
     int i;
     PermissionHelper permissionHelper;
+    private static SplashActivity mInstance;
 
     @Override
     protected void onResume()
@@ -51,14 +56,74 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-
+        AnalyticsTrackers.initialize(this);
+        AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
 
         splashStat = (TextView) findViewById(R.id.splashStatus);
         circload = (CircularFillableLoaders)findViewById(R.id.circularFillableLoaders);
         pseudoAnim();
 
          }
+
+    public static synchronized SplashActivity getInstance() {
+        return mInstance;
+    }
+
+    public synchronized Tracker getGoogleAnalyticsTracker() {
+        AnalyticsTrackers analyticsTrackers = AnalyticsTrackers.getInstance();
+        return analyticsTrackers.get(AnalyticsTrackers.Target.APP);
+    }
+
+    /***
+     * Tracking screen view
+     *
+     * @param screenName screen name to be displayed on GA dashboard
+     */
+
+    public void trackScreenView(String screenName) {
+        Tracker t = getGoogleAnalyticsTracker();
+
+        // Set screen name.
+        t.setScreenName(screenName);
+
+        // Send a screen view.
+        t.send(new HitBuilders.ScreenViewBuilder().build());
+
+        GoogleAnalytics.getInstance(this).dispatchLocalHits();
+    }
+
+    /***
+     * Tracking exception
+     *
+     * @param e exception to be tracked
+     */
+    public void trackException(Exception e) {
+        if (e != null) {
+            Tracker t = getGoogleAnalyticsTracker();
+
+            t.send(new HitBuilders.ExceptionBuilder()
+                    .setDescription(
+                            new StandardExceptionParser(this, null)
+                                    .getDescription(Thread.currentThread().getName(), e))
+                    .setFatal(false)
+                    .build()
+            );
+        }
+    }
+
+    /***
+     * Tracking event
+     *
+     * @param category event category
+     * @param action   action of the event
+     * @param label    label
+     */
+    public void trackEvent(String category, String action, String label) {
+        Tracker t = getGoogleAnalyticsTracker();
+
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build());
+    }
 
 
 

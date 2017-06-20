@@ -8,7 +8,7 @@
 
         <item
             android:id="@+id/faboptions_textsms"
-            android:icon="@drawable/ic_profile"
+            android:icon="@drawable/ic_reminder"
             android:title="Message" />
 
         <item

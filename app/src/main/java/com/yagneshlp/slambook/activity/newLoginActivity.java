@@ -1,14 +1,11 @@
 package com.yagneshlp.slambook.activity;
 
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -28,7 +25,7 @@ public class newLoginActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newlogin);
+        setContentView(R.layout.activity_login);
         initView();
         startEnterAnim();
         etUsername.setOnEditorActionListener(new EditText.OnEditorActionListener() {
