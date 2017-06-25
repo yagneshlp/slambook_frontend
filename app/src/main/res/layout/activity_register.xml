@@ -81,8 +81,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="#fff"
                 android:paddingLeft="5dp"
+                android:textSize="10dp"
                 android:id="@+id/tvagree"
-                android:text="I agree to terms and conditions"/>
+                android:text="I agree to EULA  and Privacy policy"/>
         </LinearLayout>
 
 

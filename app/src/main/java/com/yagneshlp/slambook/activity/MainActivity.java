@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -52,6 +53,7 @@ import butterknife.OnClick;
 
 
 import static android.view.View.GONE;
+import static com.yagneshlp.slambook.src.Config.auth;
 
 public class MainActivity extends Activity{
 
@@ -162,31 +164,32 @@ public class MainActivity extends Activity{
                 } else {
 
 
-                    new ToastOXDialog.Build(MainActivity.this)
+                    new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle)
                             .setTitle("No Internet!")
-                            .setContent("No Internet Connection Detected!\nCannot Ping server")
-                            .setPositiveText("Wi-Fi")
-                            //.setPositiveBackgroundColorResource(R.color.orange)
-                            //.setPositiveTextColorResource(R.color.black)
-                            .onPositive(new ToastOXDialog.ButtonCallback() {
+                            .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                            .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                                public void onClick(DialogInterface dialog, int which) {
+
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                     Log.i("Click","Yes");
-                                    closeContextMenu();
+
+
                                 }
                             })
-                            .setNegativeText("Mobile Data")
-                           // .setNegativeBackgroundColorResource(R.color.black)
-                            //.setNegativeTextColorResource(R.color.orange)
-                            .onNegative(new ToastOXDialog.ButtonCallback(){
+                            .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                                public void onClick(DialogInterface dialog, int which) {
+
                                     startActivity(new Intent(Settings.ACTION_SETTINGS));
                                     Log.w("Click","No");
-                                    closeContextMenu();
+
                                 }
-                            }).show();
+                            })
+                            .setCancelable(false)
+                            .show();
+
+
                 }
             }
         }
@@ -221,7 +224,7 @@ public class MainActivity extends Activity{
             case R.id.item4:
             {
                 Log.i(TAG, "Log out option");
-                new AlertDialog.Builder(MainActivity.this)
+                new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle)
                         .setTitle("Log out?")
                         .setMessage("Are you sure you want to Log out?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -402,38 +405,37 @@ public class MainActivity extends Activity{
 
             }
         }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
 
                 Log.e(TAG, "Volley Error: " + error.getMessage()); //error in android part logged
+
               fL.setVisibility(View.INVISIBLE);
                 lL.setVisibility(View.VISIBLE);
-                new ToastOXDialog.Build(MainActivity.this)
-                        .setTitle("Something's Wrong :(")
-                        .setContent("Cannot Ping server. Might be a poor or unstable connection")
-                        .setPositiveText("Wi-Fi")
-                        //.setPositiveBackgroundColorResource(R.color.orange)
-                        //.setPositiveTextColorResource(R.color.black)
-                        .onPositive(new ToastOXDialog.ButtonCallback() {
+                new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle)
+                        .setTitle("No Internet!")
+                        .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                        .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                            public void onClick(DialogInterface dialog, int which) {
+
                                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 Log.i("Click","Yes");
 
+
                             }
                         })
-                        .setNegativeText("Mobile Data")
-                        // .setNegativeBackgroundColorResource(R.color.black)
-                        //.setNegativeTextColorResource(R.color.orange)
-                        .onNegative(new ToastOXDialog.ButtonCallback(){
+                        .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull ToastOXDialog toastOXDialog) {
+                            public void onClick(DialogInterface dialog, int which) {
+
                                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                                 Log.w("Click","No");
 
                             }
                         })
-                        .autoDismiss(true)
+                        .setCancelable(false)
                         .show();
             }
         })
@@ -454,6 +456,8 @@ public class MainActivity extends Activity{
                 params.put("value", "null");
                 return params;  //returning ready json
             }
+
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);

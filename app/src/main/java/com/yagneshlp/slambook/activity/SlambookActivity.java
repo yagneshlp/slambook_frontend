@@ -51,14 +51,32 @@ public class SlambookActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        new AlertDialog.Builder(SlambookActivity.this)
+        new AlertDialog.Builder(SlambookActivity.this,R.style.MyAlertDialogStyle)
                 .setMessage("Are you sure you want exit?\nSubmitted details will be saved.")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                        startActivity(new Intent(SlambookActivity.this, MainActivity.class));
-                        overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                        new AlertDialog.Builder(SlambookActivity.this,R.style.MyAlertDialogStyle)
+                                .setMessage("Do you want to set a Reminder to continue filling slambook?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                        startActivity(new Intent(SlambookActivity.this, ReminderActivity.class));
+                                        overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                        startActivity(new Intent(SlambookActivity.this, MainActivity.class));
+                                        overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                                    }
+                                })
+                                .setCancelable(false)
+                                .show();
+
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

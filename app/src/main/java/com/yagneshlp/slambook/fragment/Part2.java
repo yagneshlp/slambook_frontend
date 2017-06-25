@@ -23,6 +23,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -35,6 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 import belka.us.androidtoggleswitch.widgets.BaseToggleSwitch;
 import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh L P
 
@@ -51,6 +55,31 @@ public class Part2 extends Fragment {
     EditText Et1, Et2,Et3,Et4;
     TextInputLayout til,tilw;
     ToggleSwitch t1,t2;
+    private AdView mAdView;
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
 
     @Override
@@ -68,6 +97,11 @@ public class Part2 extends Fragment {
         Et2 = (EditText) view.findViewById(R.id.PhnoSec);
         Et3 = (EditText) view.findViewById(R.id.PhnoWhats);
         Et4 = (EditText) view.findViewById(R.id.EmailSen);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
 
@@ -218,6 +252,7 @@ public class Part2 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -293,9 +328,10 @@ public class Part2 extends Fragment {
                 params.put("ph2", phs);
                 params.put("phw", phw);
                 params.put("email", email);
-
                 return params;
             }
+
+
 
         };
 

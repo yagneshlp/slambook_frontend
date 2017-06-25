@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:background="#414141"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context="com.yagneshlp.slambook.fragment.Part3">
 
     <android.support.v7.widget.CardView
@@ -193,19 +194,22 @@
                     android:textAlignment="center"
                     />
 
+
                 <com.dd.processbutton.iml.ActionProcessButton
                     android:id="@+id/btn_signup"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Submit"
                     android:background="@color/colorPrimary"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="10dp"
                     android:textColor="@android:color/white"
                     android:layout_marginBottom="10dp"
                     android:paddingBottom="0dp"
                     android:elevation="5dp"
                     custom:pb_colorNormal="@color/colorPrimary"
                     custom:pb_colorPressed="@color/colorPrimaryDark"/>
+
+
 
 
             </LinearLayout>

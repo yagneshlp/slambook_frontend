@@ -56,7 +56,7 @@
             android:layout_weight="1"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:src="@drawable/ic_help" />
+            android:src="@drawable/ic_info" />
 
         <ImageView
             android:id="@+id/item4"

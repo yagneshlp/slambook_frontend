@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Slambook</string>
-    <string name="app_version">Version 0.4.2\nFermium</string>
+    <string name="app_version">Version 1.0.1\nGermanium</string>
     <string name="copyrightinfo">Copyright 2017 Yagnesh L P\n MIT License</string>
     <string name="more">More</string>
     <string name="percentComplete">Percentage Completed</string>
@@ -50,7 +50,30 @@
     <string name="ham3">2 hours</string>
     <string name="ham4">6 Hours</string>
     <string name="ham5">Tomorrow</string>
-
+    
+    <string name="banner_page1">ca-app-pub-8474948312595115/2756745386</string>
+    <string name="banner_page2">ca-app-pub-8474948312595115/5151808587</string>
+    <string name="banner_page3">ca-app-pub-8474948312595115/6628541787</string>
+    <string name="banner_page4">ca-app-pub-8474948312595115/8105274981</string>
+    <string name="banner_page5">ca-app-pub-8474948312595115/9582008183</string>
+    <string name="banner_page6">ca-app-pub-8474948312595115/6488940987</string>
+    <string name="banner_page7">ca-app-pub-8474948312595115/7965674188</string>
+    <string name="banner_page8">ca-app-pub-8474948312595115/9442407384</string>
+    <string name="banner_page9">ca-app-pub-8474948312595115/1919140583</string>
+    <string name="banner_page10">ca-app-pub-8474948312595115/3395873786</string>
+    <string name="banner_page11">ca-app-pub-8474948312595115/3256272984</string>
+    <string name="banner_page12">ca-app-pub-8474948312595115/4733006181</string>
+    <string name="banner_page13">ca-app-pub-8474948312595115/6209739387</string>
+    <string name="banner_page14">ca-app-pub-8474948312595115/7686472585</string>
+    <string name="banner_page15">ca-app-pub-8474948312595115/9163205784</string>
+    <string name="banner_page16">ca-app-pub-8474948312595115/1639938984</string>
+    <string name="banner_page17">ca-app-pub-8474948312595115/3116672181</string>
+    <string name="banner_page18">ca-app-pub-8474948312595115/4593405384</string>
+    <string name="banner_page19">ca-app-pub-8474948312595115/6070138588</string>
+    <string name="banner_page20">ca-app-pub-8474948312595115/7546871789</string>
+    <string name="banner_page21">ca-app-pub-8474948312595115/7649446580</string>
+    <string name="banner_page22">ca-app-pub-8474948312595115/9126179789</string>
+    <string name="banner_page23">ca-app-pub-8474948312595115/1602912982</string>
 
 
     <string name="fab1">An Alert will be set to appear 30 minutes from now</string>

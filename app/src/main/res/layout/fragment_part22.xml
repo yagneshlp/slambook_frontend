@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:background="#414141"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context="com.yagneshlp.slambook.fragment.Part22"
     >
 
@@ -468,6 +469,24 @@
                     android:elevation="5dp"
                     custom:pb_colorNormal="@color/colorPrimary"
                     custom:pb_colorPressed="@color/colorPrimaryDark"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/linearLayout2"
+                    android:layout_marginTop="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true">
+
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/adView"
+                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        ads:adSize="BANNER"
+                        ads:adUnitId="@string/banner_page22"></com.google.android.gms.ads.AdView>
+                </LinearLayout>
 
             </LinearLayout>
 

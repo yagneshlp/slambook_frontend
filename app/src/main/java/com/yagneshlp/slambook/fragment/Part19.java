@@ -22,6 +22,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -32,6 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh L P
 
@@ -45,6 +49,31 @@ public class Part19 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName();
     ActionProcessButton button;
     EditText Et1, Et2,Et3;
+    private AdView mAdView;
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
 
 
@@ -59,6 +88,11 @@ public class Part19 extends Fragment {
         Et2 = (EditText) view.findViewById(R.id.dimp);
         Et3 = (EditText) view.findViewById(R.id.cimp);
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
 
@@ -180,6 +214,7 @@ public class Part19 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -254,6 +289,7 @@ public class Part19 extends Fragment {
                 params.put("curr", cimp);
                 return params;
             }
+
 
         };
 

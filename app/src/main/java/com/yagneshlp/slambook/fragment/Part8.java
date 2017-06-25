@@ -21,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -31,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh
 
@@ -44,6 +48,8 @@ public class Part8 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName();
     ActionProcessButton button;
     EditText Et1, Et2,Et3;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -174,6 +180,7 @@ public class Part8 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -246,6 +253,7 @@ public class Part8 extends Fragment {
                 params.put("playlist", play);
                 return params;
             }
+
 
         };
 

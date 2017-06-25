@@ -45,6 +45,8 @@ public class SplashActivity extends Activity {
     int i;
     PermissionHelper permissionHelper;
     private static SplashActivity mInstance;
+    AlertDialog.Builder builder;
+    AlertDialog dialog;
 
     @Override
     protected void onResume()
@@ -62,6 +64,34 @@ public class SplashActivity extends Activity {
         splashStat = (TextView) findViewById(R.id.splashStatus);
         circload = (CircularFillableLoaders)findViewById(R.id.circularFillableLoaders);
         pseudoAnim();
+
+         builder = new AlertDialog.Builder(SplashActivity.this,R.style.MyAlertDialogStyle)
+                .setTitle("No Internet!")
+                .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Log.i("Click","Yes");
+                        dialog.dismiss();
+                        dialog.dismiss();
+                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+
+
+                    }
+                })
+                .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Log.w("Click","No");
+                        dialog.dismiss();
+                        dialog.dismiss();
+                        startActivity(new Intent(Settings.ACTION_SETTINGS));
+
+                    }
+                })
+                .setCancelable(true);
 
          }
 
@@ -129,7 +159,8 @@ public class SplashActivity extends Activity {
 
     private void pseudoAnim()
     {
-       circload.setVisibility(View.VISIBLE);
+
+        circload.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -191,32 +222,10 @@ public class SplashActivity extends Activity {
                                 } else {
                                     circload.setVisibility(View.INVISIBLE);
                                     splashStat.setText("No Internet !!!");
-                                    new ToastOXDialog.Build(SplashActivity.this)
-                                            .setTitle("No Internet!")
-                                            .setContent("No Internet Connection Detected!\nCannot Ping server")
-                                            .setPositiveText("Wi-Fi")
-                                            //.setPositiveBackgroundColorResource(R.color.orange)
-                                            //.setPositiveTextColorResource(R.color.black)
-                                            .onPositive(new ToastOXDialog.ButtonCallback() {
-                                                @Override
-                                                public void onClick(@NonNull ToastOXDialog toastOXDialog) {
-                                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                                    Log.i("Click","Yes");
-                                                    closeContextMenu();
+                                    dialog=builder.create();
+                                    dialog.show();
 
-                                                }
-                                            })
-                                            .setNegativeText("Mobile Data")
-                                            // .setNegativeBackgroundColorResource(R.color.black)
-                                            //.setNegativeTextColorResource(R.color.orange)
-                                            .onNegative(new ToastOXDialog.ButtonCallback(){
-                                                @Override
-                                                public void onClick(@NonNull ToastOXDialog toastOXDialog) {
-                                                    startActivity(new Intent(Settings.ACTION_SETTINGS));
-                                                    Log.w("Click","No");
-                                                    closeContextMenu();
-                                                }
-                                            }).show();
+
 
 
                                 }

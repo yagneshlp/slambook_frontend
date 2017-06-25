@@ -28,9 +28,10 @@ public class HelpActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
     }
-    public void faq(View view)
+    public void credits(View view)
     {
-
+        startActivity(new Intent(HelpActivity.this,CreditsActivity.class));
+        overridePendingTransition(R.anim.slide_left,R.anim.no_change);
     }
     public void document(View view)
     {

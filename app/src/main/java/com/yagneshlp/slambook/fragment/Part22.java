@@ -24,6 +24,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -40,6 +42,8 @@ import java.util.Map;
 import belka.us.androidtoggleswitch.widgets.BaseToggleSwitch;
 import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
 
+import static com.yagneshlp.slambook.src.Config.auth;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -54,6 +58,32 @@ public class Part22 extends Fragment {
     ActionProcessButton button;
     String ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13;
     ToggleSwitch t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13;
+    private AdView mAdView;
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -78,6 +108,12 @@ public class Part22 extends Fragment {
         t11 = (ToggleSwitch) view.findViewById(R.id.q11);
         t12 = (ToggleSwitch) view.findViewById(R.id.q12);
         t13 = (ToggleSwitch) view.findViewById(R.id.q13);
+
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
 
 
         t1.setOnToggleSwitchChangeListener(new BaseToggleSwitch.OnToggleSwitchChangeListener() {
@@ -369,6 +405,7 @@ public class Part22 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -456,6 +493,7 @@ public class Part22 extends Fragment {
                 params.put("q13", ans13);
                 return params;
             }
+
 
         };
 

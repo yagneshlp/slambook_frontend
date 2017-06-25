@@ -35,6 +35,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.master.permissionhelper.PermissionHelper;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
@@ -47,6 +49,7 @@ import com.yagneshlp.slambook.src.Config;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.yagneshlp.slambook.src.Config.auth;
 
 import com.yagneshlp.slambook.helper.AndroidMultiPartEntity.ProgressListener;
 
@@ -103,6 +106,7 @@ public class Part4 extends Fragment {
     private TextView text;
     private String filePath = null;
     long totalSize = 0;
+    private AdView mAdView;
 
 
     //Image request code
@@ -128,6 +132,30 @@ public class Part4 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName(); //for Logger Purposes
 
     @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -141,6 +169,11 @@ public class Part4 extends Fragment {
         buttonUpload = (ActionProcessButton) view.findViewById(R.id.buttonUpload);
         imageView = (ImageView) view.findViewById(R.id.imageView);
         text = (TextView)  view.findViewById(R.id.textSelf);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
 
         permissionHelper = new PermissionHelper(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         permissionHelper.request(new PermissionHelper.PermissionCallback() {
@@ -440,6 +473,7 @@ public class Part4 extends Fragment {
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL);
+            httppost.addHeader("Authorization", auth);
 
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
@@ -615,6 +649,7 @@ public class Part4 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -686,6 +721,7 @@ public class Part4 extends Fragment {
 
                 return params;
             }
+
 
         };
 

@@ -8,8 +8,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,6 +48,8 @@ import com.yagneshlp.slambook.helper.SQLiteHandler;
 import com.yagneshlp.slambook.helper.SessionManager;
 import com.yagneshlp.slambook.other.LogUtil;
 import com.yagneshlp.slambook.other.StereoView;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 public class LoginActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -127,7 +135,45 @@ public class LoginActivity extends Activity {
                     // Check for empty data in the form
                     if (!email.isEmpty() && !password.isEmpty()) {
                         // login user
-                        checkLogin(email, password);
+                        ConnectivityManager cm = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                        if (activeNetwork != null) { // connected to the internet
+                            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                                checkLogin(email, password);
+                            }
+                            else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                                checkLogin(email, password);
+                            }
+                        } else {
+
+
+                            new AlertDialog.Builder(LoginActivity.this,R.style.MyAlertDialogStyle)
+                                    .setTitle("No Internet!")
+                                    .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                                    .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                            Log.i("Click","Yes");
+
+
+                                        }
+                                    })
+                                    .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                            Log.w("Click","No");
+
+                                        }
+                                    })
+                                    .setCancelable(false)
+                                    .show();
+
+
+                        }
                     } else {
                         // Prompt user to enter credentials
                         Toast.makeText(getApplicationContext(),
@@ -260,6 +306,7 @@ public class LoginActivity extends Activity {
                 return params;
             }
 
+
         };
 
         // Adding request to request queue
@@ -315,8 +362,48 @@ public class LoginActivity extends Activity {
 
         // Check for empty data in the form
         if (!email.isEmpty() && !password.isEmpty()) {
-            // login user
-            checkLogin(email, password);
+            // login
+            ConnectivityManager cm = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (activeNetwork != null) { // connected to the internet
+                if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                    checkLogin(email, password);
+                }
+                else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    checkLogin(email, password);
+                }
+            } else {
+
+
+                new AlertDialog.Builder(LoginActivity.this,R.style.MyAlertDialogStyle)
+                        .setTitle("No Internet!")
+                        .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                        .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                Log.i("Click","Yes");
+
+
+                            }
+                        })
+                        .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                Log.w("Click","No");
+
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+
+
+            }
+
+
         } else {
             // Prompt user to enter credentials
             Toast.makeText(getApplicationContext(),
