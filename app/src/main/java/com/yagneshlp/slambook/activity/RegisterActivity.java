@@ -216,11 +216,12 @@ public class RegisterActivity extends Activity {
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
+                        String msg=jObj.getString("message");
 
                         // Inserting row in users table
                         db.addUser(id,name, email, uid, created_at);
 
-                        Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 
                         // Launch login activity
                         Intent intent = new Intent(

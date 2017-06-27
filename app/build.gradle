@@ -8,8 +8,8 @@ android {
         applicationId "com.yagneshlp.slambook"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "Alpha v3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         //useLibrary 'org.apache.http.legacy'
 

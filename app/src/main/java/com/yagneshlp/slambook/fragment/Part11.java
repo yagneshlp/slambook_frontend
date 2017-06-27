@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -55,6 +56,7 @@ public class Part11 extends Fragment {
     TextInputLayout til;
     ToggleSwitch t1;
     private AdView mAdView;
+    TextView tvWarn;
 
     @Override
     public void onPause() {
@@ -94,6 +96,7 @@ public class Part11 extends Fragment {
                 .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
                 .build();
         mAdView.loadAd(adRequest);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
 
         t1.setOnToggleSwitchChangeListener(new BaseToggleSwitch.OnToggleSwitchChangeListener() {
             @Override
@@ -111,6 +114,7 @@ public class Part11 extends Fragment {
 
 
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+        checker(1);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
         button.setOnClickListener(new View.OnClickListener() {
@@ -123,11 +127,11 @@ public class Part11 extends Fragment {
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
-                       checker();
+                       checker(2);
                     }
                 } else {
                     Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -147,7 +151,7 @@ public class Part11 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page11_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -165,6 +169,12 @@ public class Part11 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -183,9 +193,10 @@ public class Part11 extends Fragment {
                                             insert_into(Et1.getText().toString());
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString());
 
                     } else {

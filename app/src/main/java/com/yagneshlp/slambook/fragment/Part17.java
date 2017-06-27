@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -52,6 +53,7 @@ public class Part17 extends Fragment {
     ActionProcessButton button;
     EditText Et1;
     private AdView mAdView;
+    TextView tvWarn;
 
     @Override
     public void onPause() {
@@ -90,6 +92,8 @@ public class Part17 extends Fragment {
                 .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
                 .build();
         mAdView.loadAd(adRequest);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
+        checker(1);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
 
@@ -102,11 +106,11 @@ public class Part17 extends Fragment {
                     if (activeNetwork != null) { // connected to the internet
                         if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
 
                         } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
 
                         }
                     } else {
@@ -128,7 +132,7 @@ public class Part17 extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page17_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -146,6 +150,12 @@ public class Part17 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -164,9 +174,10 @@ public class Part17 extends Fragment {
                                             insert_into(Et1.getText().toString());
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString());
 
                     } else {

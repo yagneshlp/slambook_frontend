@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -48,6 +49,7 @@ public class Part8 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName();
     ActionProcessButton button;
     EditText Et1, Et2,Et3;
+    TextView tvWarn;
 
 
 
@@ -61,8 +63,10 @@ public class Part8 extends Fragment {
         Et2 = (EditText) view.findViewById(R.id.artist);
         Et3 = (EditText) view.findViewById(R.id.playlist);
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
+        checker(1);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,10 +76,10 @@ public class Part8 extends Fragment {
                     if (activeNetwork != null) { // connected to the internet
                         if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
                         } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
                         }
                     } else {
                         Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -101,7 +105,7 @@ public class Part8 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page8_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -120,6 +124,13 @@ public class Part8 extends Fragment {
                         if(status.equals("Yes"))
                         {
 
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
+
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
                                     .setMessage("This page has already been filled.\nDo you want to update it with current data or retain previous data?")
@@ -137,9 +148,10 @@ public class Part8 extends Fragment {
                                             insert_into(Et1.getText().toString(), Et2.getText().toString(),Et3.getText().toString());
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString(), Et2.getText().toString(),Et3.getText().toString());
 
                     } else {

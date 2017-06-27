@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -59,10 +60,12 @@ public class Part22 extends Fragment {
     String ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13;
     ToggleSwitch t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13;
     private AdView mAdView;
+    TextView tvWarn;
 
     @Override
     public void onPause() {
         if (mAdView != null) {
+
             mAdView.pause();
         }
         super.onPause();
@@ -108,6 +111,7 @@ public class Part22 extends Fragment {
         t11 = (ToggleSwitch) view.findViewById(R.id.q11);
         t12 = (ToggleSwitch) view.findViewById(R.id.q12);
         t13 = (ToggleSwitch) view.findViewById(R.id.q13);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
 
         mAdView = (AdView) view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
@@ -287,7 +291,7 @@ public class Part22 extends Fragment {
             }
         });
 
-
+        checker(1);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,12 +303,12 @@ public class Part22 extends Fragment {
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
 
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
                     }
                 } else {
                     Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -326,7 +330,7 @@ public class Part22 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page22_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -344,6 +348,12 @@ public class Part22 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -362,9 +372,10 @@ public class Part22 extends Fragment {
                                             insert_into(ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13);
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(ans1,ans2,ans3,ans4,ans5,ans6,ans7,ans8,ans9,ans10,ans11,ans12,ans13);
 
                     } else {

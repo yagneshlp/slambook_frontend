@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -56,6 +57,7 @@ public class Part2 extends Fragment {
     TextInputLayout til,tilw;
     ToggleSwitch t1,t2;
     private AdView mAdView;
+    TextView tvWarn;
 
     @Override
     public void onPause() {
@@ -91,6 +93,7 @@ public class Part2 extends Fragment {
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
         til=(TextInputLayout) view.findViewById(R.id.input_layout_PhnoSec);
         tilw=(TextInputLayout) view.findViewById(R.id.input_layout_PhnoWhats);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
         t1 = (ToggleSwitch) view.findViewById(R.id.toggle);
         t2= (ToggleSwitch) view.findViewById(R.id.watsapp);
         Et1 = (EditText) view.findViewById(R.id.PhnoPrim);
@@ -102,6 +105,7 @@ public class Part2 extends Fragment {
                 .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
                 .build();
         mAdView.loadAd(adRequest);
+        checker(1);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
 
@@ -145,11 +149,11 @@ public class Part2 extends Fragment {
                     if (activeNetwork != null) { // connected to the internet
                         if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
 
                         } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
                         }
                     } else {
                         Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -173,7 +177,7 @@ public class Part2 extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page2_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -191,6 +195,12 @@ public class Part2 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -209,10 +219,11 @@ public class Part2 extends Fragment {
                                             insert_into(Et1.getText().toString(), Et2.getText().toString(), Et3.getText().toString() , Et4.getText().toString());
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
-                            insert_into(Et1.getText().toString(), Et2.getText().toString(), Et3.getText().toString() , Et4.getText().toString());
+                            if(choice==2)
+                                insert_into(Et1.getText().toString(), Et2.getText().toString(), Et3.getText().toString() , Et4.getText().toString());
 
                     } else {
                         // Error in Submission
