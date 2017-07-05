@@ -2,6 +2,7 @@ package com.yagneshlp.slambook.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -33,9 +34,12 @@ public class HelpActivity extends Activity {
         startActivity(new Intent(HelpActivity.this,CreditsActivity.class));
         overridePendingTransition(R.anim.slide_left,R.anim.no_change);
     }
-    public void document(View view)
+    public void ylp(View view)
     {
-
+        String url = "http://yagneshlp.com";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
     public void help(View view)
     {

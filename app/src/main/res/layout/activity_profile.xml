@@ -104,6 +104,7 @@
         android:id="@+id/deactivate"
         android:layout_height="wrap_content"
         android:text="Deactivate account"
+        android:visibility="gone"
         android:textColor="#88ffffff"
         android:gravity="center"
         android:layout_marginBottom="10dp"

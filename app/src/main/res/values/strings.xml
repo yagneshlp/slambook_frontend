@@ -77,10 +77,10 @@
 
 
     <string name="fab1">An Alert will be set to appear 30 minutes from now</string>
-    <string name="fab2">An Alert will be set to appear 1 Hour from now    .</string>
+    <string name="fab2">An Alert will be set to appear 1 Hour from now.</string>
     <string name="fab3">An Alert will be set to appear 2 Hours from now</string>
     <string name="fab4">An Alert will be set to appear 6 Hours from now</string>
-    <string name="fab5">An Alert will be set to appear Tomorrow      .</string>
+    <string name="fab5">An Alert will be set to appear Tomorrow.</string>
 
 
     <string name="insert_email_login">Insert your email:</string>

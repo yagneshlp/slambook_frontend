@@ -106,6 +106,7 @@
         android:text="Deactivate account"
         android:textColor="#88ffffff"
         android:gravity="center"
+        android:visibility="gone"
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"

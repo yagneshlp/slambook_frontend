@@ -4,11 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -55,15 +57,16 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static com.yagneshlp.slambook.src.Config.auth;
 
-public class MainActivity extends Activity{
+public class MainActivity extends Activity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    @Bind(R.id.tapBarMenu) TapBarMenu tapBarMenu;
-    TextView tv,tvPerc;
-     MisMeter meter;
+    @Bind(R.id.tapBarMenu)
+    TapBarMenu tapBarMenu;
+    TextView tv, tvPerc;
+    MisMeter meter;
     ValueAnimator anim;
     ActionProcessButton button;
-    CardView cv,cvM;
+    CardView cv, cvM;
     TapBarMenu t;
     FrameLayout fL;
     LinearLayout lL;
@@ -71,49 +74,48 @@ public class MainActivity extends Activity{
     boolean val;
     LinearLayout l1;
     Button logout;
+    LinearLayout completed;
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         insert_into();
     }
+
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         finishAffinity();
         finish();
     }
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        val=getIntent().getBooleanExtra("displayAlerter",false);
-        t=(TapBarMenu) findViewById(R.id.tapBarMenu);
+        val = getIntent().getBooleanExtra("displayAlerter", false);
+        t = (TapBarMenu) findViewById(R.id.tapBarMenu);
         logout = (Button) findViewById(R.id.logOut);
         logout.setVisibility(GONE);
-        l1=(LinearLayout) findViewById(R.id.linearmain);
+        completed = (LinearLayout) findViewById(R.id.linearCompleted);
+        l1 = (LinearLayout) findViewById(R.id.linearmain);
         t.setVisibility(View.INVISIBLE);
         meter = (MisMeter) findViewById(R.id.meter);
-        tv=(TextView) findViewById(R.id.tview);
+        tv = (TextView) findViewById(R.id.tview);
         tvPerc = (TextView) findViewById(R.id.percComp);
-        fL=(FrameLayout) findViewById(R.id.mainFrame);
-        lL=(LinearLayout) findViewById(R.id.ErrorPlaceholderLayout);
+        fL = (FrameLayout) findViewById(R.id.mainFrame);
+        lL = (LinearLayout) findViewById(R.id.ErrorPlaceholderLayout);
         tvPerc.setVisibility(GONE);
-        cv= (CardView) findViewById(R.id.cardView);
-        cvM= (CardView) findViewById(R.id.cardView2);
+        cv = (CardView) findViewById(R.id.cardView);
+        cvM = (CardView) findViewById(R.id.cardView2);
         button = (ActionProcessButton) findViewById(R.id.btn_fill);
         button.setMode(ActionProcessButton.Mode.ENDLESS);
         tv.setVisibility(View.INVISIBLE);
         cv.setVisibility(GONE);
         insert_into();
         SessionManager cur = new SessionManager(this);
-        uname=cur.getUsername();
-        if(val)
+        uname = cur.getUsername();
+        if (val)
             showAlerter();
         t.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,88 +145,86 @@ public class MainActivity extends Activity{
         });
 
         button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                button.setProgress(1);
-                ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                if (activeNetwork != null) { // connected to the internet
-                    if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                        finish();
-                        startActivity(new Intent(MainActivity.this,SlambookActivity.class));
-                        overridePendingTransition(R.anim.fade_out,R.anim.no_change);
-                        button.setProgress(100);
-                    }
-                    else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        finish();
-                        startActivity(new Intent(MainActivity.this,SlambookActivity.class));
-                        overridePendingTransition(R.anim.fade_out,R.anim.no_change);
-                        button.setProgress(100);
-                    }
-                } else {
+                                      @Override
+                                      public void onClick(View v) {
+                                          button.setProgress(1);
+                                          ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                                          NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                                          if (activeNetwork != null) { // connected to the internet
+                                              if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                                                  finish();
+                                                  startActivity(new Intent(MainActivity.this, SlambookActivity.class));
+                                                  overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                                                  button.setProgress(100);
+                                              } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                                                  finish();
+                                                  startActivity(new Intent(MainActivity.this, SlambookActivity.class));
+                                                  overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                                                  button.setProgress(100);
+                                              }
+                                          } else {
 
 
-                    new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle)
-                            .setTitle("No Internet!")
-                            .setMessage("No Internet Connection Detected!\nCannot Ping server")
-                            .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                                              new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle)
+                                                      .setTitle("No Internet!")
+                                                      .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                                                      .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                                                          @Override
+                                                          public void onClick(DialogInterface dialog, int which) {
 
-                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.i("Click","Yes");
-
-
-                                }
-                            })
-                            .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    startActivity(new Intent(Settings.ACTION_SETTINGS));
-                                    Log.w("Click","No");
-
-                                }
-                            })
-                            .setCancelable(false)
-                            .show();
+                                                              startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                                              Log.i("Click", "Yes");
 
 
-                }
-            }
-        }
+                                                          }
+                                                      })
+                                                      .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                                                          @Override
+                                                          public void onClick(DialogInterface dialog, int which) {
+
+                                                              startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                                              Log.w("Click", "No");
+
+                                                          }
+                                                      })
+                                                      .setCancelable(false)
+                                                      .show();
+
+
+                                          }
+                                      }
+                                  }
         );
 
     }
 
-    @OnClick({ R.id.item1, R.id.item2, R.id.item3, R.id.item4 }) public void onMenuItemClick(View view) {
+    @OnClick({R.id.item1, R.id.item2, R.id.item3, R.id.item4})
+    public void onMenuItemClick(View view) {
         tapBarMenu.close();
         switch (view.getId()) {
-            case R.id.item1:
-            {
+            case R.id.item1: {
                 Log.i(TAG, "Reminder option");
                 finish();
-                startActivity(new Intent(MainActivity.this,ReminderActivity.class));
-                overridePendingTransition(R.anim.slide_left,R.anim.no_change);
+                startActivity(new Intent(MainActivity.this, ReminderActivity.class));
+                overridePendingTransition(R.anim.slide_left, R.anim.no_change);
                 break;
             }
 
             case R.id.item2:
                 Log.i(TAG, "Profile Option");
                 finishAffinity();
-                startActivity(new Intent(MainActivity.this,ProfileActivity.class));
-                overridePendingTransition(R.anim.pull_up_from_bottom,R.anim.no_change);
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                overridePendingTransition(R.anim.pull_up_from_bottom, R.anim.no_change);
                 break;
             case R.id.item3:
                 Log.i(TAG, "Help option");
                 finishAffinity();
-                startActivity(new Intent(MainActivity.this,HelpActivity.class));
-                overridePendingTransition(R.anim.slide_right,R.anim.no_change);
+                startActivity(new Intent(MainActivity.this, HelpActivity.class));
+                overridePendingTransition(R.anim.slide_right, R.anim.no_change);
                 break;
-            case R.id.item4:
-            {
+            case R.id.item4: {
                 Log.i(TAG, "Log out option");
-                new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle)
+                new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle)
                         .setTitle("Log out?")
                         .setMessage("Are you sure you want to Log out?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -255,11 +255,11 @@ public class MainActivity extends Activity{
                         .show();
 
 
-
                 break;
             }
         }
     }
+
     private void insert_into() {
 
 
@@ -281,41 +281,37 @@ public class MainActivity extends Activity{
                         lL.setVisibility(View.INVISIBLE);
                         fL.setVisibility(View.VISIBLE);
                         String errorMsg = jObj.getString("message"); //extracting the message
-                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
+                        Log.d(TAG, "Message returned from server: " + errorMsg); //logging the error message
                         SessionManager cur = new SessionManager(getApplication()); //setting the percentage in local preferences
                         final int progress = jObj.getInt("value");                //     "
                         cur.setPercentage(progress);                           //      "
-                        String name=cur.getUsername();
-                        if(progress==0) //
+                        String name = cur.getUsername();
+                        if (progress == 0) //
                         {
                             meter.setVisibility(GONE);
                             tv.setText("Hey " + name + " ! \nWhat are you waiting for?\nStart Filling the Slam book!");
                             tv.setVisibility(View.VISIBLE);
                             cv.setVisibility(View.VISIBLE);
                             tv.setTextSize(30);
-                            tv.setPadding(0,20,0,0);
-                        }
-                        else
-                        {
-                         if(progress != 100)
-                            {
-                             tv.setText("\nNot yet Completed :(");
+                            tv.setPadding(0, 20, 0, 0);
+                        } else {
+                            if (progress != 100) {
+                                tv.setText("\nNot yet Completed :(");
                                 button.setText("Continue filling");
-                                Log.d(TAG,"Progresss was found to be non 100 or zero");
+                                Log.d(TAG, "Progresss was found to be non 100 or zero");
                             }
                             cvM.setVisibility(View.VISIBLE);
-                            anim = ValueAnimator.ofFloat(meter.progress, progress/100f );
+                            anim = ValueAnimator.ofFloat(meter.progress, progress / 100f);
                             anim.setInterpolator(new AccelerateDecelerateInterpolator());
                             anim.setDuration(1000);
                             anim.setStartDelay(1000);
                             anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                meter.setProgress((float) valueAnimator.getAnimatedValue());
-                               if((float) valueAnimator.getAnimatedValue()== 1f)
-                                    {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                    meter.setProgress((float) valueAnimator.getAnimatedValue());
+                                    if ((float) valueAnimator.getAnimatedValue() == 1f) {
                                         tv.setText("Congrats! You have finished the Slambook");
-                                        tv.setPadding(0,40,0,0);
+                                        tv.setPadding(0, 40, 0, 0);
                                         tv.setAlpha(0.0f);
                                         meter.setAlpha(1.0f);
                                         meter.animate()
@@ -338,6 +334,7 @@ public class MainActivity extends Activity{
                                                                         lay.gravity = Gravity.CENTER;
                                                                         cv.setLayoutParams(lay);
                                                                         logout.setVisibility(View.VISIBLE);
+                                                                        completed.setVisibility(View.VISIBLE);
                                                                         t.setVisibility(GONE);
 
                                                                     }
@@ -347,10 +344,9 @@ public class MainActivity extends Activity{
                                                 });
 
 
-                                     }
+                                    }
 
-                                if((float) valueAnimator.getAnimatedValue()== progress/100f && (float) valueAnimator.getAnimatedValue() != 1f)
-                                    {
+                                    if ((float) valueAnimator.getAnimatedValue() == progress / 100f && (float) valueAnimator.getAnimatedValue() != 1f) {
                                         tv.setAlpha(0f);
                                         cv.setAlpha(0f);
                                         tvPerc.setAlpha(0f);
@@ -381,11 +377,12 @@ public class MainActivity extends Activity{
 
 
                                     }
-                            }
+                                }
 
-                        }); Log.d(TAG,"animator properties defined");
+                            });
+                            Log.d(TAG, "animator properties defined");
                             anim.start();
-                            Log.d(TAG,"Animation started");
+                            Log.d(TAG, "Animation started");
 
                         }
 
@@ -393,8 +390,8 @@ public class MainActivity extends Activity{
                         // Error in Submission
 
                         String errorMsg = jObj.getString("message"); //extracting the error
-                        Log.d(TAG,"Message returned from server: " + errorMsg ); //logging the error message
-                        Toast.makeText(getApplication(),"An Error occured and logged, try Again", Toast.LENGTH_LONG).show(); //displaying an error to the user
+                        Log.d(TAG, "Message returned from server: " + errorMsg); //logging the error message
+                        Toast.makeText(getApplication(), "An Error occured and logged, try Again", Toast.LENGTH_LONG).show(); //displaying an error to the user
                     }
                 } catch (JSONException e) {
                     // JSON data was not returned, because an error at php script/mysql
@@ -411,9 +408,9 @@ public class MainActivity extends Activity{
 
                 Log.e(TAG, "Volley Error: " + error.getMessage()); //error in android part logged
 
-              fL.setVisibility(View.INVISIBLE);
+                fL.setVisibility(View.INVISIBLE);
                 lL.setVisibility(View.VISIBLE);
-                new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle)
+                new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle)
                         .setTitle("No Internet!")
                         .setMessage("No Internet Connection Detected!\nCannot Ping server")
                         .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
@@ -421,7 +418,7 @@ public class MainActivity extends Activity{
                             public void onClick(DialogInterface dialog, int which) {
 
                                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                Log.i("Click","Yes");
+                                Log.i("Click", "Yes");
 
 
                             }
@@ -431,25 +428,24 @@ public class MainActivity extends Activity{
                             public void onClick(DialogInterface dialog, int which) {
 
                                 startActivity(new Intent(Settings.ACTION_SETTINGS));
-                                Log.w("Click","No");
+                                Log.w("Click", "No");
 
                             }
                         })
                         .setCancelable(false)
                         .show();
             }
-        })
-        {
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
-                SQLiteHandler db= new SQLiteHandler(getApplication());  //object of the sqlLite helper
+                SQLiteHandler db = new SQLiteHandler(getApplication());  //object of the sqlLite helper
                 SessionManager cur = new SessionManager(getApplication());  //object of the session manager
-                String uid=db.getUserID();  //getting the current userid from local db
-                String uname=cur.getUsername(); //getting current user name from sessionmnager
+                String uid = db.getUserID();  //getting the current userid from local db
+                String uname = cur.getUsername(); //getting current user name from sessionmnager
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("route", "30");               //   json POST paran add
-                params.put("userid",uid);               //   "
+                params.put("userid", uid);               //   "
                 params.put("username", uname);          //    "
                 params.put("need", "get");          //    "
                 params.put("requirement", "progress");       //    "
@@ -463,11 +459,10 @@ public class MainActivity extends Activity{
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    public void showAlerter()
-    {
+    public void showAlerter() {
 
         Alerter.create(MainActivity.this)
-                .setTitle("Hey "+ uname)
+                .setTitle("Hey " + uname)
                 .setText("Welcome")
                 .setBackgroundColor(R.color.colorPrimary)
                 .hideIcon()
@@ -475,6 +470,47 @@ public class MainActivity extends Activity{
                 .enableVibration(true)
 
                 .show();
+    }
+
+    public void sendEmail(View view)
+    {
+        String to="yagneshlp@gmail.com";
+        String subject="Reg:Slambook";
+        String message="Hey! I have Completed filling your Slambook. \n Please do the needful \n\nRegards,\n" + uname ;
+
+
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{ to});
+        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+        email.putExtra(Intent.EXTRA_TEXT, message);
+
+        //need this to prompts email client only
+        email.setType("message/rfc822");
+
+        startActivity(Intent.createChooser(email, "Choose an Email client :"));
+    }
+    public void rate_app(View view)
+    {
+        Uri uri = Uri.parse("market://details?id=" + getApplication().getPackageName());
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        // To count with Play market backstack, After pressing back button,
+        // to taken back to our application, we need to add following flags to intent.
+        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        try {
+            startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + getApplication().getPackageName())));
+        }
+    }
+    public void feedback(View view)
+    {
+        String url = "https://goo.gl/forms/dxhqwlMn3pKu6Yd63";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
 }
