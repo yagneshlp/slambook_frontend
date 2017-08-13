@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,8 +16,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +35,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.master.permissionhelper.PermissionHelper;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -43,6 +49,7 @@ import com.yagneshlp.slambook.src.Config;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.yagneshlp.slambook.src.Config.auth;
 
 import com.yagneshlp.slambook.helper.AndroidMultiPartEntity.ProgressListener;
 
@@ -95,10 +102,11 @@ public class Part4 extends Fragment {
     private Button buttonChoose;
     private ActionProcessButton buttonUpload;
     private ImageView imageView;
-
+    PermissionHelper permissionHelper;
     private TextView text;
     private String filePath = null;
     long totalSize = 0;
+    private AdView mAdView;
 
 
     //Image request code
@@ -124,16 +132,66 @@ public class Part4 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName(); //for Logger Purposes
 
     @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_part4, container, false);
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
 
         //Initializing views
         buttonChoose = (Button) view.findViewById(R.id.buttonChoose);
         buttonUpload = (ActionProcessButton) view.findViewById(R.id.buttonUpload);
         imageView = (ImageView) view.findViewById(R.id.imageView);
         text = (TextView)  view.findViewById(R.id.textSelf);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
+
+        permissionHelper = new PermissionHelper(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+        permissionHelper.request(new PermissionHelper.PermissionCallback() {
+            @Override
+            public void onPermissionGranted() {
+                Log.d(TAG, "onPermissionGranted() called");
+            }
+
+            @Override
+            public void onPermissionDenied() {
+                Log.d(TAG, "onPermissionDenied() called");
+            }
+
+            @Override
+            public void onPermissionDeniedBySystem() {
+                Log.d(TAG, "onPermissionDeniedBySystem() called");
+            }
+        });
 
 
        // buttonUpload.setMode(ActionProcessButton.Mode.ENDLESS);
@@ -192,8 +250,11 @@ public class Part4 extends Fragment {
      */
     private void captureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = null;
 
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
@@ -412,6 +473,7 @@ public class Part4 extends Fragment {
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL);
+            httppost.addHeader("Authorization", auth);
 
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
@@ -587,6 +649,7 @@ public class Part4 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -653,11 +716,12 @@ public class Part4 extends Fragment {
                 params.put("route", "4");
                 params.put("userid", uid);
                 params.put("username", uname);
-                params.put("activity_slambook", "blahBLAH");
+                params.put("dummy", "blahBLAH");
 
 
                 return params;
             }
+
 
         };
 

@@ -1,6 +1,8 @@
 package com.yagneshlp.slambook.fragment;
 
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.kunzisoft.switchdatetime.SwitchDateTimeDialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,8 +56,34 @@ public class Part1 extends Fragment {
     ActionProcessButton button;    //submit buttom
     EditText Et1, Et2;
     TextView tv;
+    TextView tvWarn;
+    private AdView mAdView;
 
     private static final String TAG_DATETIME_FRAGMENT = "TAG_DATETIME_FRAGMENT";
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +94,14 @@ public class Part1 extends Fragment {
         Et1 = (EditText) view.findViewById(R.id.Et1);
         Et2 = (EditText) view.findViewById(R.id.Et2);
         tv=(TextView) view.findViewById(R.id.editText5);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
+        checker(1);
         button.setMode(ActionProcessButton.Mode.ENDLESS);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,12 +113,12 @@ public class Part1 extends Fragment {
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
 
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                             button.setProgress(1);
-                            checker();
+                            checker(2);
                     }
                 } else {
                     Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -95,6 +130,8 @@ public class Part1 extends Fragment {
                                     }
                             ).show();
                 }}
+                else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
 
             }
         });
@@ -145,7 +182,7 @@ public class Part1 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page1_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -163,8 +200,12 @@ public class Part1 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
-
-                            new AlertDialog.Builder(getContext())
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                           if(choice == 2)
+                            { new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
                                     .setMessage("This page has already been filled.\nDo you want to update it with current data or retain previous data?")
                                     .setPositiveButton("Retain old info", new DialogInterface.OnClickListener() {
@@ -181,9 +222,11 @@ public class Part1 extends Fragment {
                                             insert_into(Et1.getText().toString(), Et2.getText().toString(),buff);
                                         }
                                     })
-                                    .show();
+                                    .setCancelable(false)
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString(), Et2.getText().toString(),buff);
 
                     } else {

@@ -1,12 +1,16 @@
 package com.yagneshlp.slambook.activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.fragment.Part1;
@@ -32,6 +36,8 @@ import com.yagneshlp.slambook.fragment.Part6;
 import com.yagneshlp.slambook.fragment.Part7;
 import com.yagneshlp.slambook.fragment.Part8;
 import com.yagneshlp.slambook.fragment.Part9;
+import com.yagneshlp.slambook.helper.SQLiteHandler;
+import com.yagneshlp.slambook.helper.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +47,49 @@ public class SlambookActivity extends AppCompatActivity {
     public static ViewPager viewPager;
 
     private ProgressDialog pDialog;
+
+    @Override
+    public void onBackPressed()
+    {
+        new AlertDialog.Builder(SlambookActivity.this,R.style.MyAlertDialogStyle)
+                .setMessage("Are you sure you want exit?\nSubmitted details will be saved.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new AlertDialog.Builder(SlambookActivity.this,R.style.MyAlertDialogStyle)
+                                .setMessage("Do you want to set a Reminder to continue filling slambook?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                        startActivity(new Intent(SlambookActivity.this, ReminderActivity.class));
+                                        overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                        startActivity(new Intent(SlambookActivity.this, MainActivity.class));
+                                        overridePendingTransition(R.anim.fade_out, R.anim.no_change);
+                                    }
+                                })
+                                .setCancelable(false)
+                                .show();
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //
+                    }
+                })
+                .setCancelable(false)
+                .show();
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

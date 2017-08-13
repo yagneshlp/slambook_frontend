@@ -32,6 +32,7 @@ import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.OnBoomListener;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 import com.nightonke.boommenu.Util;
+import com.onurciner.toastox.ToastOXDialog;
 import com.yagneshlp.slambook.R;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +45,7 @@ import me.grantland.widget.AutofitTextView;
 
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.HOUR;
+import static java.util.Calendar.LONG;
 import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.MONTH;
 
@@ -193,6 +195,18 @@ public class ReminderActivity extends FragmentActivity {
     }
 
     @Override
+    public void onBackPressed()
+    {
+        if(!bmb.isBoomed())
+        {
+            finish();
+            startActivity(new Intent(ReminderActivity.this,MainActivity.class));
+            overridePendingTransition(R.anim.slide_right,R.anim.no_change);
+        }
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reminder);
@@ -286,6 +300,9 @@ public class ReminderActivity extends FragmentActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(),
                 pendingIntent);
+        Toast.makeText(ReminderActivity.this,"Reminder Set!",Toast.LENGTH_LONG);
+        finish();
+        startActivity(new Intent(ReminderActivity.this,MainActivity.class));
 
     }
 }

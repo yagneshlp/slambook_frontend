@@ -4,15 +4,25 @@ package com.yagneshlp.slambook.activity;
  * Created by yagne on 30-01-2017.
  */
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request.Method;
@@ -26,31 +36,58 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.StandardExceptionParser;
+import com.google.android.gms.analytics.Tracker;
 import com.yagneshlp.slambook.R;
+import com.yagneshlp.slambook.app.AnalyticsTrackers;
 import com.yagneshlp.slambook.app.AppConfig;
 import com.yagneshlp.slambook.app.AppController;
 import com.yagneshlp.slambook.helper.SQLiteHandler;
 import com.yagneshlp.slambook.helper.SessionManager;
+import com.yagneshlp.slambook.other.LogUtil;
+import com.yagneshlp.slambook.other.StereoView;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 public class LoginActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
-    private Button btnLogin;
+
     private Button btnLinkToRegister;
     private EditText inputEmail;
     private EditText inputPassword;
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private EditText etUsername;
+    private EditText etPassword;
+    private StereoView stereoView;
+    private int translateY;
+    Intent intentproceed;
+
+
+    @Override
+    public void onBackPressed()
+    {
+        finishAffinity();
+        finish();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
+
         btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
+        stereoView = (StereoView) findViewById(R.id.stereoView);
+        etUsername = (EditText) findViewById(R.id.et_username);
+        etPassword = (EditText) findViewById(R.id.et_password);
+
+        startEnterAnim();
+
+
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -71,27 +108,108 @@ public class LoginActivity extends Activity {
             finish();
         }
 
+
+
         // Login button Click Event
-        btnLogin.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View view) {
-                String email = inputEmail.getText().toString().trim();
-                String password = inputPassword.getText().toString().trim();
-
-                // Check for empty data in the form
-                if (!email.isEmpty() && !password.isEmpty()) {
-                    // login user
-                    checkLogin(email, password);
-                } else {
-                    // Prompt user to enter credentials
-                    Toast.makeText(getApplicationContext(),
-                            "Please enter the credentials!", Toast.LENGTH_LONG)
-                            .show();
+        etUsername.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    stereoView.toNext();
+                    etPassword.requestFocus();
+                    return true;
                 }
+                return false;
             }
-
         });
 
+        etPassword.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                    String email = etUsername.getText().toString().trim();
+                    String password = etPassword.getText().toString().trim();
+
+                    // Check for empty data in the form
+                    if (!email.isEmpty() && !password.isEmpty()) {
+                        // login user
+                        ConnectivityManager cm = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                        if (activeNetwork != null) { // connected to the internet
+                            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                                checkLogin(email, password);
+                            }
+                            else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                                checkLogin(email, password);
+                            }
+                        } else {
+
+
+                            new AlertDialog.Builder(LoginActivity.this,R.style.MyAlertDialogStyle)
+                                    .setTitle("No Internet!")
+                                    .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                                    .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                            Log.i("Click","Yes");
+
+
+                                        }
+                                    })
+                                    .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                            Log.w("Click","No");
+
+                                        }
+                                    })
+                                    .setCancelable(false)
+                                    .show();
+
+
+                        }
+                    } else {
+                        // Prompt user to enter credentials
+                        Toast.makeText(getApplicationContext(),
+                                "Please enter the credentials!", Toast.LENGTH_LONG)
+                                .show();
+                        startEnterAnim();
+                        stereoView.setItem(1);
+                        etUsername.requestFocus();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+        //stereoView.setStartScreen(1);
+        stereoView.setResistance(2f);
+        stereoView.setCan3D(true);
+        stereoView.post(new Runnable() {
+            @Override
+            public void run() {
+                int[] location = new int[2];
+                stereoView.getLocationOnScreen(location);
+                translateY = location[1];
+            }
+        });
+        stereoView.setiStereoListener(new StereoView.IStereoListener() {
+            @Override
+            public void toPre(int curScreen) {
+                LogUtil.m("Previous screen moved " + curScreen);
+            }
+
+            @Override
+            public void toNext(int curScreen) {
+                LogUtil.m("next screen moved" + curScreen);
+            }
+        });
         // Link to Register Screen
         btnLinkToRegister.setOnClickListener(new View.OnClickListener() {
 
@@ -105,9 +223,11 @@ public class LoginActivity extends Activity {
 
     }
 
+
+
     /**
      * function to verify login details in mysql db
-     * */
+     */
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -135,7 +255,7 @@ public class LoginActivity extends Activity {
 
                         // Now store the user in SQLite
                         String uid = jObj.getString("uid");
-                        String id=jObj.getString("id");
+                        String id = jObj.getString("id");
 
                         JSONObject user = jObj.getJSONObject("user");
                         String name = user.getString("name");
@@ -144,13 +264,14 @@ public class LoginActivity extends Activity {
                                 .getString("created_at");
 
                         // Inserting row in users table
-                        db.addUser(id,name, email, uid, created_at);
+                        db.addUser(id, name, email, uid, created_at);
                         session.setUserName(name);
                         // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
+                        intentproceed = new Intent(LoginActivity.this,
                                 MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                        intentproceed.putExtra("displayAlerter", true);
+                        startExitAnim();
+
                     } else {
                         // Error in login. Get the error message
                         String errorMsg = jObj.getString("error_msg");
@@ -185,6 +306,7 @@ public class LoginActivity extends Activity {
                 return params;
             }
 
+
         };
 
         // Adding request to request queue
@@ -199,5 +321,97 @@ public class LoginActivity extends Activity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void startExitAnim() {
+        stereoView.animate()
+                .alpha(0f)
+                .translationY(-100f)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        startActivity(intentproceed);
+                        finish();
+                    }
+                })
+                .start();
+
+    }
+
+    private void startEnterAnim() {
+        stereoView.setAlpha(0f);
+        stereoView.animate()
+                .alpha(1f)
+               // .setDuration(800L)
+                .translationY(-150f)
+                .start();
+
+        etUsername.requestFocus();
+
+    }
+
+    public void goNXT(View view) {
+        stereoView.toNext();
+        etPassword.requestFocus();
+    }
+
+    public void login(View view) {
+        String email = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        // Check for empty data in the form
+        if (!email.isEmpty() && !password.isEmpty()) {
+            // login
+            ConnectivityManager cm = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (activeNetwork != null) { // connected to the internet
+                if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                    checkLogin(email, password);
+                }
+                else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    checkLogin(email, password);
+                }
+            } else {
+
+
+                new AlertDialog.Builder(LoginActivity.this,R.style.MyAlertDialogStyle)
+                        .setTitle("No Internet!")
+                        .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                        .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                Log.i("Click","Yes");
+
+
+                            }
+                        })
+                        .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                Log.w("Click","No");
+
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+
+
+            }
+
+
+        } else {
+            // Prompt user to enter credentials
+            Toast.makeText(getApplicationContext(),
+                    "Please enter the credentials!", Toast.LENGTH_LONG)
+                    .show();
+            startEnterAnim();
+            stereoView.setItem(1);
+            etUsername.requestFocus();
+        }
     }
 }

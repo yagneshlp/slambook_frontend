@@ -17,11 +17,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -32,6 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh L P
 
@@ -45,6 +50,32 @@ public class Part21 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName();
     ActionProcessButton button;
     EditText Et1;
+    private AdView mAdView;
+    TextView tvWarn;
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,35 +86,45 @@ public class Part21 extends Fragment {
 
         Et1 = (EditText) view.findViewById(R.id.hurt);
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
+        checker(1);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Et1.getText().toString().length() != 0) {
+                    ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    if (activeNetwork != null) { // connected to the internet
+                        if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                            button.setProgress(1);
+                            checker(2);
 
-                ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                if (activeNetwork != null) { // connected to the internet
-                    if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                        button.setProgress(1);
-                        checker();
-
-                    }
-                    else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        button.setProgress(1);
-                        checker();
-                    }
-                } else {
-                    Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
-                            .setAction("WIfi", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                            button.setProgress(1);
+                            checker(2);
+                        }
+                    } else {
+                        Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
+                                .setAction("WIfi", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                            }
                                         }
-                                    }
-                            ).show();
+                                ).show();
+                    }
                 }
+                else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
+
 
 
 
@@ -94,7 +135,7 @@ public class Part21 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page21_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -112,27 +153,34 @@ public class Part21 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2) {
 
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle("Update the Data?")
-                                    .setMessage("This page has already been filled.\nDo you want to update it with current data or retain previous data?")
-                                    .setPositiveButton("Retain old info", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            button.setProgress(100); //the button is set to green colour(subitted)
-                                            SlambookActivity.viewPager.setCurrentItem(SlambookActivity.viewPager.getCurrentItem()+1,true); //the veiwpager is changed to next page
-                                            Log.d(TAG,"User decided to retain old value" ); //logging the error message
-                                        }
-                                    })
-                                    .setNegativeButton("Update with new data", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            insert_into(Et1.getText().toString());
-                                        }
-                                    })
-                                    .show();
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Update the Data?")
+                                        .setMessage("This page has already been filled.\nDo you want to update it with current data or retain previous data?")
+                                        .setPositiveButton("Retain old info", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                button.setProgress(100); //the button is set to green colour(subitted)
+                                                SlambookActivity.viewPager.setCurrentItem(SlambookActivity.viewPager.getCurrentItem() + 1, true); //the veiwpager is changed to next page
+                                                Log.d(TAG, "User decided to retain old value"); //logging the error message
+                                            }
+                                        })
+                                        .setNegativeButton("Update with new data", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                insert_into(Et1.getText().toString());
+                                            }
+                                        })
+                                        .show();
+                            }
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString());
 
                     } else {
@@ -173,6 +221,7 @@ public class Part21 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -246,6 +295,7 @@ public class Part21 extends Fragment {
                 params.put("hurt", hurt);
                 return params;
             }
+
 
         };
 

@@ -16,11 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -31,6 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh L P
 
@@ -43,6 +48,9 @@ public class Part3 extends Fragment {
     private static final String TAG = SlambookActivity.class.getSimpleName();
     ActionProcessButton button;
     EditText Et1, Et2,Et3,Et4,Et5,Et6;
+    TextView tvWarn;
+
+
 
 
     @Override
@@ -57,9 +65,11 @@ public class Part3 extends Fragment {
         Et4 = (EditText) view.findViewById(R.id.GP);
         Et5 = (EditText) view.findViewById(R.id.PIN);
         Et6 = (EditText) view.findViewById(R.id.QUO);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
+        checker(1);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,12 +80,12 @@ public class Part3 extends Fragment {
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
 
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
                     }
                 } else {
                     Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -97,7 +107,7 @@ public class Part3 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page3_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -115,6 +125,12 @@ public class Part3 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -133,9 +149,10 @@ public class Part3 extends Fragment {
                                             insert_into(Et1.getText().toString(), Et2.getText().toString(), Et4.getText().toString() , Et3.getText().toString(),Et5.getText().toString(),Et6.getText().toString() );
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString(), Et2.getText().toString(), Et4.getText().toString() , Et3.getText().toString(),Et5.getText().toString(),Et6.getText().toString() );
 
                     } else {
@@ -176,6 +193,7 @@ public class Part3 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -192,7 +210,7 @@ public class Part3 extends Fragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
+                Log.d(TAG, "Page 3 submit Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -252,6 +270,7 @@ public class Part3 extends Fragment {
 
                 return params;
             }
+
 
         };
 

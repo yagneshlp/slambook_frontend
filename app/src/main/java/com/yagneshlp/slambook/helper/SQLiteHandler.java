@@ -119,6 +119,20 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return  "null";
     }
 
+    public String getEmail()
+    {
+        String selectQuery = "SELECT " + KEY_EMAIL + " FROM " + TABLE_USER;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            return cursor.getString(0).toString();
+        }
+        cursor.close();
+        return  "null";
+    }
+
 
     /**
      * Re crate database Delete all tables and create them again

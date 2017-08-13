@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clip">
+    data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMjAwMTA5MDQvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0L0RURC9zdmcxMC5kdGQiPjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MjAuMDAwMDAwcHQiIGhlaWdodD0iNTMxLjAwMDAwMHB0IiB2aWV3Qm94PSIwIDAgNzIwLjAwMDAwMCA1MzEuMDAwMDAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij48bWV0YWRhdGE+Q3JlYXRlZCBieSBwb3RyYWNlIDEuMTQsIHdyaXR0ZW4gYnkgUGV0ZXIgU2VsaW5nZXIgMjAwMS0yMDE3PC9tZXRhZGF0YT48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCw1MzEuMDAwMDAwKSBzY2FsZSgwLjEwMDAwMCwtMC4xMDAwMDApImZpbGw9IiMwMDAwMDAiIHN0cm9rZT0ibm9uZSI+PC9nPjwvc3ZnPg==)
+  </string>
+    <integer name="clip_original_width">720</integer>
+    <integer name="clip_original_height">531</integer>
+
+</resources>

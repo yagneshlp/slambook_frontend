@@ -18,11 +18,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -35,6 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 import belka.us.androidtoggleswitch.widgets.BaseToggleSwitch;
 import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh L P
 
@@ -51,6 +56,32 @@ public class Part2 extends Fragment {
     EditText Et1, Et2,Et3,Et4;
     TextInputLayout til,tilw;
     ToggleSwitch t1,t2;
+    private AdView mAdView;
+    TextView tvWarn;
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
 
     @Override
@@ -62,12 +93,19 @@ public class Part2 extends Fragment {
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
         til=(TextInputLayout) view.findViewById(R.id.input_layout_PhnoSec);
         tilw=(TextInputLayout) view.findViewById(R.id.input_layout_PhnoWhats);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
         t1 = (ToggleSwitch) view.findViewById(R.id.toggle);
         t2= (ToggleSwitch) view.findViewById(R.id.watsapp);
         Et1 = (EditText) view.findViewById(R.id.PhnoPrim);
         Et2 = (EditText) view.findViewById(R.id.PhnoSec);
         Et3 = (EditText) view.findViewById(R.id.PhnoWhats);
         Et4 = (EditText) view.findViewById(R.id.EmailSen);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
+        checker(1);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
 
@@ -105,29 +143,31 @@ public class Part2 extends Fragment {
                     Et2.setText("000");
                 if(Et3.getText().length()==0)
                     Et3.setText("000");
+                if(Et1.getText().toString().length()!=0 || Et4.getText().toString().length()!=0 ) {
+                    ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    if (activeNetwork != null) { // connected to the internet
+                        if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                            button.setProgress(1);
+                            checker(2);
 
-                ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                if (activeNetwork != null) { // connected to the internet
-                    if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                        button.setProgress(1);
-                        checker();
-
-                    }
-                    else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        button.setProgress(1);
-                       checker();
-                    }
-                } else {
-                    Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
-                            .setAction("WIfi", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                            button.setProgress(1);
+                            checker(2);
+                        }
+                    } else {
+                        Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
+                                .setAction("WIfi", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                            }
                                         }
-                                    }
-                            ).show();
+                                ).show();
+                    }
                 }
+                else
+                    Toast.makeText(getContext(),"Fill all the fields!",Toast.LENGTH_LONG);
 
 
 
@@ -137,7 +177,7 @@ public class Part2 extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page2_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -155,6 +195,12 @@ public class Part2 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -173,10 +219,11 @@ public class Part2 extends Fragment {
                                             insert_into(Et1.getText().toString(), Et2.getText().toString(), Et3.getText().toString() , Et4.getText().toString());
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
-                            insert_into(Et1.getText().toString(), Et2.getText().toString(), Et3.getText().toString() , Et4.getText().toString());
+                            if(choice==2)
+                                insert_into(Et1.getText().toString(), Et2.getText().toString(), Et3.getText().toString() , Et4.getText().toString());
 
                     } else {
                         // Error in Submission
@@ -216,6 +263,7 @@ public class Part2 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -291,9 +339,10 @@ public class Part2 extends Fragment {
                 params.put("ph2", phs);
                 params.put("phw", phw);
                 params.put("email", email);
-
                 return params;
             }
+
+
 
         };
 

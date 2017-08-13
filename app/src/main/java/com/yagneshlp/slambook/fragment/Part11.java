@@ -18,11 +18,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.yagneshlp.slambook.R;
 import com.yagneshlp.slambook.activity.SlambookActivity;
 import com.yagneshlp.slambook.app.AppConfig;
@@ -35,6 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 import belka.us.androidtoggleswitch.widgets.BaseToggleSwitch;
 import belka.us.androidtoggleswitch.widgets.ToggleSwitch;
+
+import static com.yagneshlp.slambook.src.Config.auth;
 
 //Created by Yagnesh L P
 
@@ -50,6 +55,32 @@ public class Part11 extends Fragment {
     EditText Et1;
     TextInputLayout til;
     ToggleSwitch t1;
+    private AdView mAdView;
+    TextView tvWarn;
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +91,12 @@ public class Part11 extends Fragment {
         til=(TextInputLayout) view.findViewById(R.id.input_layout_tv);
         t1 = (ToggleSwitch) view.findViewById(R.id.tvtog);
         Et1 = (EditText) view.findViewById(R.id.tv);
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
+        tvWarn=(TextView) view.findViewById(R.id.warning);
 
         t1.setOnToggleSwitchChangeListener(new BaseToggleSwitch.OnToggleSwitchChangeListener() {
             @Override
@@ -77,22 +114,24 @@ public class Part11 extends Fragment {
 
 
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+        checker(1);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(Et1.getText().toString().length()==0 )
+                    Et1.setText("No Series watched");
                 ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 if (activeNetwork != null) { // connected to the internet
                     if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         button.setProgress(1);
-                        checker();
+                        checker(2);
                     }
                     else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         button.setProgress(1);
-                       checker();
+                       checker(2);
                     }
                 } else {
                     Snackbar.make(view, "Check Your Internet Connection ", Snackbar.LENGTH_LONG)
@@ -112,7 +151,7 @@ public class Part11 extends Fragment {
         return view;
     }
 
-    private void checker()
+    private void checker(final int choice)
     {
         String tag_string_req = "req_page11_val";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -130,6 +169,12 @@ public class Part11 extends Fragment {
                         String status=jObj.getString("value");
                         if(status.equals("Yes"))
                         {
+                            if(choice==1)
+                            {
+                                tvWarn.setVisibility(View.VISIBLE);
+                            }
+                            if(choice == 2)
+                            {
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Update the Data?")
@@ -148,9 +193,10 @@ public class Part11 extends Fragment {
                                             insert_into(Et1.getText().toString());
                                         }
                                     })
-                                    .show();
+                                    .show();}
                         }
                         else
+                        if(choice==2)
                             insert_into(Et1.getText().toString());
 
                     } else {
@@ -191,6 +237,7 @@ public class Part11 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -262,9 +309,11 @@ public class Part11 extends Fragment {
                 return params;
             }
 
+
         };
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
 }

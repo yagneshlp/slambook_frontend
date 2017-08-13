@@ -2,6 +2,8 @@ package com.yagneshlp.slambook.fragment;
 
 
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.kunzisoft.switchdatetime.SwitchDateTimeDialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +44,8 @@ import java.util.Locale;
 import java.util.Map;
 import me.grantland.widget.AutofitTextView;
 
+import static com.yagneshlp.slambook.src.Config.auth;
+
 //Created by Yagnesh L P
 
 public class Part23 extends Fragment {
@@ -59,8 +63,33 @@ public class Part23 extends Fragment {
     SwitchDateTimeDialogFragment dateTimeFragment;
     CheckBox cb1,cb2,cb3;
     AutofitTextView t1,t2;
+    private AdView mAdView;
 
     private static final String TAG_DATETIME_FRAGMENT = "TAG_DATETIME_FRAGMENT";
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
 
 
     @Override
@@ -75,6 +104,12 @@ public class Part23 extends Fragment {
         t1=(AutofitTextView) view.findViewById(R.id.datepik);
         t2=(AutofitTextView) view.findViewById(R.id.datedisp);
         button = (ActionProcessButton) view.findViewById(R.id.btn_signup);
+
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5AB42BEA113D6BA5C3DDC861AE5B9165")
+                .build();
+        mAdView.loadAd(adRequest);
 
         button.setMode(ActionProcessButton.Mode.ENDLESS);
         button.setOnClickListener(new View.OnClickListener() {
@@ -256,6 +291,7 @@ public class Part23 extends Fragment {
                 params.put("need", "get");             //    "
                 return params;  //returning ready json
             }
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -293,7 +329,7 @@ public class Part23 extends Fragment {
 
                         if(cur.getPercentage()==100)
                         {
-                            new ParticleSystem(getActivity(),80,R.drawable.star, 10000)
+                           /* new ParticleSystem(getActivity(),80,R.drawable.star, 10000)
                                     .setSpeedModuleAndAngleRange(0f, 0.1f, 160, 200)
                                     .setRotationSpeed(360)
                                     .setAcceleration(0.00017f, 135)
@@ -332,7 +368,7 @@ public class Part23 extends Fragment {
                                     .setSpeedModuleAndAngleRange(0f, 0.1f, -20, 20)
                                     .setRotationSpeed(360)
                                     .setAcceleration(-0.00017f, 0)
-                                    .emit(getView().findViewById(R.id.emiter_right), 20,5700);
+                                    .emit(getView().findViewById(R.id.emiter_right), 20,5700); */
 
                             new AlertDialog.Builder(getContext())
                                     .setTitle("Yaay!!!")
@@ -391,6 +427,7 @@ public class Part23 extends Fragment {
                 params.put("doc", doc);
                 return params;
             }
+
 
         };
 

@@ -3,6 +3,13 @@
     <color name="colorPrimary">#d32f2f</color>
     <color name="colorPrimaryDark">#c72c2c</color>
     <color name="colorAccent">#000</color>
+    <color name="TextColor">#ffffff</color>
+    <color name="background">#414141</color>
+
+    <color name="perfectBlue">#1976d2</color>
+
+    <color name="ActionbuttonGreenNormal">#00c853</color>
+    <color name="ActionbuttonGreenPressed">#009624</color>
 
     <!-- Screens background color-->
     <color name="bg_screen1">#f64c73</color>
@@ -60,5 +67,13 @@
     <color name="ig_yell">#ffc838</color>
     <color name="yt_red">#cd201f</color>
     <color name="tw_blu"> #00aced</color>
+
+    <color name="bg_blue_deep">#242A38</color>
+    <color name="bg_white">#FFFFFF</color>
+    <color name="bg_gray">#C5C9CC</color>
+
+    <color name="font_gray">#A6AFC6</color>
+    <color name="font_blue_deep">#242A38</color>
+
 
 </resources>

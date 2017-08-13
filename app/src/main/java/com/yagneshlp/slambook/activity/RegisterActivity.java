@@ -6,12 +6,21 @@ package com.yagneshlp.slambook.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request.Method;
@@ -31,6 +40,8 @@ import com.yagneshlp.slambook.app.AppController;
 import com.yagneshlp.slambook.helper.SQLiteHandler;
 import com.yagneshlp.slambook.helper.SessionManager;
 
+import static com.yagneshlp.slambook.src.Config.auth;
+
 public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnRegister;
@@ -38,9 +49,12 @@ public class RegisterActivity extends Activity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText inputPasswordConf;
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    CheckBox cb1;
+    TextView tv1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +65,10 @@ public class RegisterActivity extends Activity {
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         btnRegister = (Button) findViewById(R.id.btnRegister);
+        inputPasswordConf = (EditText) findViewById(R.id.passwordConf);
         btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
+        cb1 = (CheckBox) findViewById(R.id.chkbox1);
+        tv1 = (TextView) findViewById(R.id.tvagree);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -71,21 +88,85 @@ public class RegisterActivity extends Activity {
             startActivity(intent);
             finish();
         }
-
+       final  ConnectivityManager cm = (ConnectivityManager) RegisterActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
         // Register Button Click event
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String name = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+                String passwordConf = inputPasswordConf.getText().toString().trim();
 
-                if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    registerUser(name, email, password);
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Please enter your details!", Toast.LENGTH_LONG)
-                            .show();
+                if(cb1.isChecked()) {
+                    if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
+                        if (password.equals(passwordConf))
+                        {
+                            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                        if (activeNetwork != null) { // connected to the internet
+                            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                                registerUser(name, email, password);
+
+                            }
+                            else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                                registerUser(name, email, password);
+
+                            }
+                        } else {
+
+
+                            new AlertDialog.Builder(RegisterActivity.this,R.style.MyAlertDialogStyle)
+                                    .setTitle("No Internet!")
+                                    .setMessage("No Internet Connection Detected!\nCannot Ping server")
+                                    .setPositiveButton("Wi-Fi", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                            Log.i("Click","Yes");
+
+
+                                        }
+                                    })
+                                    .setNegativeButton("Mobile Data", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            startActivity(new Intent(Settings.ACTION_SETTINGS));
+                                            Log.w("Click","No");
+
+                                        }
+                                    })
+                                    .setCancelable(false)
+                                    .show();
+
+
+                        }}
+                        else {
+                            Toast.makeText(getApplicationContext(), "Passwords do not match!", Toast.LENGTH_LONG);
+                            inputPassword.setText("");
+                            inputPasswordConf.setText("");
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "Please enter all the details!", Toast.LENGTH_LONG)
+                                .show();
+                    }
                 }
+                else
+                    Toast.makeText(getApplicationContext(),
+                            "Please agree the Terms and conditions", Toast.LENGTH_LONG)
+                            .show();
+
+
+            }
+        });
+        tv1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://slambook.yagneshlp.com/eula/";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
 
@@ -135,11 +216,12 @@ public class RegisterActivity extends Activity {
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
+                        String msg=jObj.getString("message");
 
                         // Inserting row in users table
                         db.addUser(id,name, email, uid, created_at);
 
-                        Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 
                         // Launch login activity
                         Intent intent = new Intent(
@@ -181,6 +263,7 @@ public class RegisterActivity extends Activity {
 
                 return params;
             }
+
 
         };
 

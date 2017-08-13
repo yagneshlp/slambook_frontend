@@ -4,129 +4,259 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#414141"
+    android:background="@color/background"
+    android:animateLayoutChanges="true"
     tools:context=".activity.MainActivity"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
 
-    >
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:id="@+id/ErrorPlaceholderLayout" >
+
+        <Space
+             android:layout_width="match_parent"
+             android:layout_height="100dp" />
+        <ImageView
+            android:layout_height="131dp"
+            android:layout_width="match_parent"
+            android:src="@drawable/ic_error"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Error"
+            android:gravity="center"
+            android:textColor="#fff"/>
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/mainFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp">
-
-        <android.support.v7.widget.CardView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_margin="0dp"
-            android:layout_gravity="top"
-            app:cardTitle="Test Title"
-            app:cardDescription="Test Description"
-            android:elevation="8dp"
-            android:id="@+id/cardView2"
-            app:cardCornerRadius="10dp"
-            android:layout_marginTop="40dp">
-
-            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:id="@+id/linearmain"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
+                android:layout_gravity="top"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:orientation="vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:background="#1976d2"
-                android:paddingBottom="20dp">
+                android:paddingTop="15dp"
+                android:visibility="visible">
 
-                <com.github.yongjhih.mismeter.MisMeter
-                    android:id="@+id/meter"
-                    android:layout_width="250sp"
-                    android:layout_gravity="top|center"
-                    app:show_text="true"
-                    android:layout_height="250sp"
-                    />
-                <TextView
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Percentage Completed"
-                    android:textColor="#fff"
-                    android:paddingTop="-10dp"
-                    android:id="@+id/percComp"
-                    android:gravity="center_horizontal"
-                    android:textSize="10sp"/>
+                    android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:elevation="8dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardDescription="Displayes progress and appropriate message"
+                    app:cardTitle="ProgressMessage">
 
+                    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                <me.grantland.widget.AutofitTextView
-                    android:text="Hello World!"
-                    android:gravity="center"
-                    android:id="@+id/tview"
-                    android:textColor="#fff"
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/colorPrimary"
+                            android:orientation="vertical"
+                            android:paddingBottom="20dp"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp">
+
+                            <com.github.yongjhih.mismeter.MisMeter
+                                android:id="@+id/meter"
+                                android:layout_width="250sp"
+                                android:layout_height="250sp"
+                                android:layout_gravity="top|center"
+                                app:show_text="true" />
+
+                            <TextView
+                                android:id="@+id/percComp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:paddingTop="-10dp"
+                                android:text="@string/percentComplete"
+                                android:textColor="@color/TextColor"
+                                android:textSize="10sp" />
+
+                            <me.grantland.widget.AutofitTextView
+                                android:id="@+id/tview"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:maxLines="3"
+                                android:text="Hello World!"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextColor"
+                                android:textSize="30sp" />
+                        </LinearLayout>
+                    </ScrollView>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="30sp"
-                    android:textAlignment="center"
-                    android:maxLines="3"
-                    />
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:elevation="8dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardDescription="Test Description"
+                    app:cardTitle="Test Title">
+
+                    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="0dp"
+                            android:orientation="vertical">
+
+                            <com.dd.processbutton.iml.ActionProcessButton
+                                android:id="@+id/btn_fill"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/colorPrimary"
+                                android:drawableRight="@drawable/ic_fill"
+                                android:elevation="5dp"
+                                android:gravity="center"
+                                android:text="Fill Slambook"
+                                android:textColor="@android:color/white"
+                                app:pb_cornerRadius="5dp"
+                                custom:pb_colorNormal="@color/ActionbuttonGreenNormal"
+                                custom:pb_colorPressed="@color/ActionbuttonGreenPressed" />
+                        </LinearLayout>
+                    </ScrollView>
+
+                </android.support.v7.widget.CardView>
+
 
             </LinearLayout>
-            </ScrollView>
 
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_gravity="bottom"
-            app:cardTitle="Test Title"
-            app:cardDescription="Test Description"
-            android:elevation="8dp"
-            android:id="@+id/cardView"
-            app:cardCornerRadius="10dp"
-            android:layout_marginTop="10dp" >
-
-            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <LinearLayout
+                android:id="@+id/linearCompleted"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:orientation="vertical"
+                android:paddingTop="15dp"
+                android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:orientation="vertical">
+                    android:layout_gravity="center"
+                    android:elevation="8dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardDescription="Displayes progress and appropriate message"
+                    app:cardTitle="ProgressMessage">
 
-                    <com.dd.processbutton.iml.ActionProcessButton
-                        android:id="@+id/btn_fill"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableRight="@drawable/ic_fill"
-                        android:gravity="center"
-                        android:text="Fill Slambook"
-                        android:background="@color/colorPrimary"
-                        android:textColor="@android:color/white"
-                        app:pb_cornerRadius="5dp"
-                        android:elevation="5dp"
-                        custom:pb_colorNormal="#00c853"
-                        custom:pb_colorPressed="#009624"/>
+                    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/perfectBlue"
+                            android:orientation="vertical">
 
-                </LinearLayout>
-            </ScrollView>
+                            <me.grantland.widget.AutofitTextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="2"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="20dp"
+                                android:text="Here are some things you can do now :"
+                                android:textColor="@color/white"
+                                android:textSize="30sp" />
 
-        </android.support.v7.widget.CardView>
+                            <Button
+                                android:id="@+id/logemail"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_marginTop="10dp"
+                                android:background="@null"
+                                android:fontFamily="sans-serif-condensed"
+                                android:onClick="sendEmail"
+                                android:text="Send me an Email informing that you have finished"
+                                android:textAllCaps="false"
+                                android:textColor="@color/white"
+                                android:textSize="15dp" />
+
+                            <Button
+
+                                style="@style/Widget.AppCompat.Button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:background="@null"
+                                android:fontFamily="casual"
+                                android:onClick="rate_app"
+                                android:text="Rate this app on Play store"
+                                android:textAllCaps="false"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <Button
+
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:background="@null"
+
+                                android:fontFamily="sans-serif-smallcaps"
+
+                                android:onClick="feedback"
+                                android:text="Give a feedback about this app"
+                                android:textAllCaps="false"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <Button
+                                android:id="@+id/logOut"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_marginTop="30dp"
+                                android:background="@null"
+                                android:text="@string/btn_logout"
+                                android:textAllCaps="false"
+                                android:textColor="@color/white"
+                                android:textSize="25sp" />
+                        </LinearLayout>
+                    </ScrollView>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
         </LinearLayout>
+
+
 
         <com.michaldrabik.tapbarmenulib.TapBarMenu
             android:id="@+id/tapBarMenu"
@@ -135,7 +265,7 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="10dp"
             app:tbm_buttonSize="40dp"
-            app:tbm_backgroundColor="@color/colorPrimary"
+            app:tbm_backgroundColor="@color/colorPrimaryDark"
             app:tbm_menuAnchor="bottom"
 
             >
@@ -158,7 +288,7 @@
                 android:layout_weight="1"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:src="@drawable/ic_edit"
+                android:src="@drawable/ic_profile"
                 />
 
             <Space
@@ -174,7 +304,7 @@
                 android:layout_weight="1"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:src="@drawable/ic_help"
+                android:src="@drawable/ic_info"
                 />
 
             <ImageView
